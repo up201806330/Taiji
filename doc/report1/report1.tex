@@ -1,0 +1,63 @@
+% \documentclass[12pt, letterpaper, twoside]{article}
+% \usepackage[utf8]{inputenc}
+\documentclass{report}[a4paper]
+\usepackage[top=35mm,bottom=35mm,left=25mm,right=25mm]{geometry} % Margins
+
+% Do not put extra space between figures of different chapters in the list of figures
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\@chapter}{\addtocontents{lof}{\protect\addvspace{10\p@}}}{}{}{}
+\makeatother
+
+% Hyperreferences
+\usepackage{hyperref}
+
+% Imports
+\usepackage{import}
+
+% Language
+\usepackage[english]{babel}
+
+% Contents title
+\addto\captionsenglish{\renewcommand*\contentsname{Table of contents}}
+
+% Headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhf{}
+\lhead{\fancyplain{}{Taiji — Delivery I (PLOG 202021)}}
+\rhead{\fancyplain{}{Class 5}}
+\lfoot{\fancyplain{}{\leftmark}}
+\rfoot{\thepage}
+
+
+% Full reference (number and name of section)
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\ref*{#1} \nameref*{#1}}} % One single link
+
+% Email
+\newcommand{\email}[1]{
+{\texttt{\href{mailto:#1}{#1}} }
+}
+
+% Metadata
+\title{\Huge Taiji \\ \Large Delivery I \\ \vspace*{4pt} \large PLOG 2020/21}
+\author{
+Class 5 \vspace{0.5em} \\
+\begin{tabular}{r l}
+	\email{up201806613@fe.up.pt} & João António Cardoso Vieira e Basto de Sousa \\
+	\email{up201806330@fe.up.pt} & Rafael Soares Ribeiro \\
+\end{tabular}
+}
+\date{1st of November, 2021}
+
+
+% Document
+\begin{document}
+\maketitle
+\setcounter{tocdepth}{2}
+\tableofcontents
+\input{game-description.tex}
+\input{game-state-representation.tex}
+\input{game-state-preview.tex}
+
+\end{document}
