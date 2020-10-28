@@ -3,7 +3,7 @@
 % translation(black, CHAR) :- CHAR = 'b'.
 
 % start state board
-initialBoard([
+initial_board([
 [clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
 [clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
 [clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
@@ -18,7 +18,7 @@ initialBoard([
 ]).
 
 % intermediate state board
-intermediateBoard([
+intermediate_board([
 [black,white,clear,clear,clear,clear,clear,clear,clear,clear,clear],
 [clear,black,clear,clear,clear,clear,clear,clear,clear,clear,clear],
 [clear,white,clear,clear,clear,clear,clear,clear,clear,clear,clear],
@@ -33,7 +33,7 @@ intermediateBoard([
 ]).
 
 % end state board
-endBoard([
+end_board([
 [black,white,white,white,black,white,clear,white,black,white,black],
 [clear,black,black,black,black,white,white,black,clear,white,black],
 [black,white,black,black,white,white,white,black,black,white,white],
@@ -47,7 +47,7 @@ endBoard([
 [clear,white,black,clear,white,clear,black,white,white,black,white]
 ]).
 
-% custom write for each of the possible 
+% custom write for each of the possibilities
 write_char(clear) :- write('.').
 write_char(white) :- write('w').
 write_char(black) :- write('b').
@@ -69,7 +69,22 @@ write_board([Head|Tail]) :-
     write_line(Head), nl,
     write_board(Tail).
    
+% predicate that returns the inital board state
+initial(GameState) :-
+    initial_board(GameState).
 
-start(_) :-
-    initialBoard(InitialBoard),
-    write_board(InitialBoard).
+
+% ------------------------- up to here is "done" / "final" -------------------------
+
+% display_game(GameState, Player):
+
+% play :-
+%     initial(GameState),
+%     write_board(GameState),
+%     start(GameState).
+
+play :-
+    % initial_board(InitialBoard),
+    % write_board(InitialBoard).
+    initial(GameState),
+    write_board(GameState).
