@@ -1,8 +1,11 @@
-% custom write for each of the possibilities
+% Custom write for each of the possibilities:
+
+% Game Symbols
 write_char(clear) :- write('  ').
 write_char(white) :- write('w').
 write_char(black) :- write('b').
 
+% Top Number Row
 write_char(48) :- write('0 ').
 write_char(49) :- write('1 ').
 write_char(50) :- write('2 ').
@@ -15,6 +18,7 @@ write_char(56) :- write('8 ').
 write_char(57) :- write('9 ').
 write_char(58) :- write('10').
 
+% Left Side Letter Column
 write_char(65) :- write('A ').
 write_char(66) :- write('B ').
 write_char(67) :- write('C ').
