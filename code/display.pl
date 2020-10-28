@@ -31,8 +31,8 @@ write_char(75) :- write('K ').
 % base case of a line of the board
 write_line([]).
 
+% writes each character of the list (line)
 write_line([Head|Tail]) :-
-    % translation(Head, CHAR),
     write_char(Head),
     write('| '),
     write_line(Tail).
@@ -40,14 +40,11 @@ write_line([Head|Tail]) :-
 % base case of the board
 write_board([]).
 
+% writes each line of the board by calling the write_line function multiple times
 write_board([Head|Tail]) :-
     write('| '),
     write_line(Head), nl,
     write_board(Tail).
-
-% write_full_board([Head|Tail]) :-
-%     % write(' | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10|'), nl,
-%     write_board([Head|Tail]).
 
 
 
