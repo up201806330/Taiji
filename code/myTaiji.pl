@@ -17,7 +17,7 @@
 play :-
     % initial_board(InitialBoard),
     % write_board(InitialBoard).
-    initial(GameState),
+    end(GameState),
     write_board(GameState).
 
 % HOW TO "TEST"

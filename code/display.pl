@@ -1,7 +1,7 @@
 % custom write for each of the possibilities
-write_char(clear) :- write('.').
+write_char(clear) :- write(' ').
 write_char(white) :- write('w').
-write_char(black) :- write('b').
+write_char(black) :- write('B').
 
 % base case of a line of the board
 write_line([]).
@@ -24,3 +24,13 @@ write_board([Head|Tail]) :-
 initial(GameState) :-
     nl, write('Initial State Board'), nl,
     initial_board(GameState).
+
+% predicate that returns the intermediate board state
+intermediate(GameState) :-
+    nl, write('Intermediate State Board'), nl,
+    intermediate_board(GameState).
+
+% predicate that returns the end board state
+end(GameState) :-
+    nl, write('End State Board'), nl,
+    end_board(GameState).
