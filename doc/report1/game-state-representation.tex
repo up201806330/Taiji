@@ -1,1 +1,27 @@
 \chapter{Game State Representation} \label{game-state-representation}
+
+The game board is represented as a list of lists (matrix). The first row (excluding the first element) of the matrix corresponds to the ASCII code of the numbers that uniquely identify each of the columns and the same applies to the first element of each row (excluding the first one) by using letters instead of numbers, similarly to the chess position system.
+
+As previously stated, each piece is made up of two different color squares.
+Due to the fact that both players play the same pieces, the "unit of representation" on the board is not the rectangle, but instead the square (therefore each player fills two squares per turn), and the number of total pieces (60 which correspond to 120 squares) is not stored or taken into account because it does not exceed the capacity of the board (121 squares which converts to 60.5 pieces).
+The elements that are numbers in a game board matrix are the ASCII correspondents of their "visual" representation. The other refer to the occupation of the board itself: clear represents a free square (not occupied) and white and black indicate the color of an occupied square.\newline
+
+initial\textunderscore board([\newline
+[clear,   48,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58],\newline
+[   65,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],\newline
+[   66,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],\newline
+[   67,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],\newline
+[   68,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],\newline
+[   69,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],\newline
+[   70,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],\newline
+[   71,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],\newline
+[   72,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],\newline
+[   73,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],\newline
+[   74,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],\newline
+[   75,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear]\newline
+]).\newline
+
+For the same reason, each player is associated to an identifying number (and corresponding color), which is only being utilized (excluding the beggining and end of the game) to let the players know whose turn it is.
+
+
+ 
