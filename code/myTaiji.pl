@@ -1,29 +1,30 @@
-% consults files
+% Consulting Files / Modules
 :- use_module(library(random)).
 :- [display, board_examples].
 
 
-% display_game(GameState, Player):
+write_player(0) :- write('Player 1 (White)').
+write_player(1) :- write('Player 2 (Black)').
 
-% play :-
-%     initial(GameState),
-%     write_board(GameState),
-%     start(GameState).
+% Determining at random what player gets to have the first turn
+random_player_number(Player) :-
+    random(0, 2, Player).
 
-% main predicate
+% Board Visualization Predicate
+display_game(GameState, Player) :-
+    write_board(GameState), nl,
+    write_player(Player), write(' has the first move!'), nl, nl.
+
+% Main Predicate
 play :-
+    random_player_number(Player),
     initial(GameState),
-    write_board(GameState).
+    display_game(GameState, Player).
 
 % HOW TO "TEST"
 % - Consult myTaiji.pl
 % - play.
 
-
-
-random_player(Number) :-
-    random(0, 2, Number),
-    write(Number).
 
 
 

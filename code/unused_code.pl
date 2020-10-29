@@ -1,6 +1,30 @@
+% ------ IN PROGRESS ------
+    % repeat,
+    %     write('Hi: '),
+    %     read_line(String),
+    %     (String = 'stop', !
+    %     ; write('oh'),
+    %     fail
+    % ).
+    %!,
+    %write('Done').
+
+
+
+% ------ UNUSED CODE ------ 
+
 % translation(clear, CHAR) :- CHAR = '.'.
 % translation(white, CHAR) :- CHAR = 'w'.
 % translation(black, CHAR) :- CHAR = 'b'.
+
+
+% display_game(GameState, Player):
+
+% play :-
+%     initial(GameState),
+%     write_board(GameState),
+%     start(GameState).
+
 
 say_hi :-
     format("~p:", '[How r u]'),
