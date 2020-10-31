@@ -88,4 +88,6 @@ The game visualization predicate, display_game(GameState,Player), takes the curr
 This predicate operates in a recursive manner, calling write_line on the Head of the matrix (1st row) before calling itself with the Tail of the matrix, repeating this process until it reaches its base case: the argument passed to it is an empty list.
 The predicate write_line translates each value of a list to its respective symbol and draws it in the SICStus terminal.
 
+In this intermediate delivery, the temporary functions initial(GameState), intermediate(GameState) and end(GameState) return examples of the game board at different stages of play (seen above).
+
 When it comes to the Player argument (a number) of the visualization predicate, its role is only to let the user know what is the player that is having the next turn (via the write\textunderscore player predicate), because unlike other games, in Taiji both players play the same pieces and don't have any data associated to themselves other than their number (and color).
