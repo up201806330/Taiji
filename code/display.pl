@@ -2,8 +2,8 @@
 
 % Game Symbols
 write_char(clear) :- write('  ').
-write_char(white) :- write('w').
-write_char(black) :- write('b').
+write_char(white) :- write('w ').
+write_char(black) :- write('b ').
 
 % Top Number Row (Numbers correspond to the correspondent ASCII decimal value)
 write_char(48) :- write('0 ').

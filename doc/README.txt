@@ -32,50 +32,48 @@ The elements that are numbers in a game board matrix are the ASCII correspondent
 
 Initial, intermediate and final board examples
 
-initial_board([
-[clear,   48,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58],
-[   65,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   66,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   67,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   68,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   69,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   70,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   71,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   72,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   73,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   74,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   75,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear]
-]).
+Initial State board
+|   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10| 
+| A |   |   |   |   |   |   |   |   |   |   |   | 
+| b |   |   |   |   |   |   |   |   |   |   |   | 
+| C |   |   |   |   |   |   |   |   |   |   |   | 
+| D |   |   |   |   |   |   |   |   |   |   |   | 
+| E |   |   |   |   |   |   |   |   |   |   |   | 
+| F |   |   |   |   |   |   |   |   |   |   |   | 
+| G |   |   |   |   |   |   |   |   |   |   |   | 
+| H |   |   |   |   |   |   |   |   |   |   |   | 
+| I |   |   |   |   |   |   |   |   |   |   |   | 
+| J |   |   |   |   |   |   |   |   |   |   |   | 
+| K |   |   |   |   |   |   |   |   |   |   |   | 
 
-intermediate_board([
-[clear,   48,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58],
-[   65,black,white,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   66,clear,black,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   67,clear,white,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   68,clear,clear,clear,clear,clear,clear,white,clear,clear,clear,clear],
-[   69,clear,clear,black,white,white,black,black,clear,clear,clear,clear],
-[   70,clear,black,black,white,white,black,black,white,clear,clear,clear],
-[   71,clear,white,clear,clear,black,clear,white,black,clear,clear,clear],
-[   72,clear,clear,clear,clear,white,clear,clear,clear,clear,clear,clear],
-[   73,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   74,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
-[   75,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear]
-]).
+Intermediate State board
+|   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10| 
+| A | b | w |   |   |   |   |   |   |   |   |   | 
+| b |   | b |   |   |   |   |   |   |   |   |   | 
+| C |   | w |   |   |   |   |   |   |   |   |   | 
+| D |   |   |   |   |   |   | w |   |   |   |   | 
+| E |   |   | b | w | w | b | b |   |   |   |   | 
+| F |   | b | b | w | w | b | b | w |   |   |   | 
+| G |   | w |   |   | b |   | w | b |   |   |   | 
+| H |   |   |   |   | w |   |   |   |   |   |   | 
+| I |   |   |   |   |   |   |   |   |   |   |   | 
+| J |   |   |   |   |   |   |   |   |   |   |   | 
+| K |   |   |   |   |   |   |   |   |   |   |   | 
 
-end_board([
-[clear,   48,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58],
-[   65,black,white,white,white,black,white,clear,white,black,white,black],
-[   66,clear,black,black,black,black,white,white,black,clear,white,black],
-[   67,black,white,black,black,white,white,white,black,black,white,white],
-[   68,white,white,white,white,black,black,white,black,white,clear,black],
-[   69,white,black,black,white,white,black,black,black,white,black,white],
-[   70,black,black,black,white,white,black,black,white,clear,white,black],
-[   71,clear,white,white,black,black,clear,white,black,black,black,white],
-[   72,black,white,black,white,white,black,black,clear,white,black,white],
-[   73,black,white,clear,white,black,white,white,black,black,white,clear],
-[   74,black,white,white,black,black,black,white,white,black,black,white],
-[   75,clear,white,black,clear,white,clear,black,white,white,black,white]
-]).
+End State board
+|   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10| 
+| A | b | w | w | w | b | w |   | w | b | w | b | 
+| b |   | b | b | b | b | w | w | b |   | w | b | 
+| C | b | w | b | b | w | w | w | b | b | w | w | 
+| D | w | w | w | w | b | b | w | b | w |   | b | 
+| E | w | b | b | w | w | b | b | b | w | b | w | 
+| F | b | b | b | w | w | b | b | w |   | w | b | 
+| G |   | w | w | b | b |   | w | b | b | b | w | 
+| H | b | w | b | w | w | b | b |   | w | b | w | 
+| I | b | w |   | w | b | w | w | b | b | w |   | 
+| J | b | w | w | b | b | b | w | w | b | b | w | 
+| K |   | w | b |   | w |   | b | w | w | b | w | 
+
 
 Values' description:
 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58 -> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
