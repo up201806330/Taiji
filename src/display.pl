@@ -52,7 +52,7 @@ write_board([Head|Tail]) :-
 
 
 % writes instructions to select orientaion of piece
-write_orientation() :-
+write_orientation :-
     nl, write('Piece orientaions:'), nl,
     write('(1)          (2)          (3)          (4)   '), nl,
     write('    |            |            |            | '), nl,
