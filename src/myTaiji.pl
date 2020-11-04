@@ -12,9 +12,9 @@ random_white_number(White) :-
     random(0, 2, White).
 
 % Board Visualization Predicate
-display_game(GameState, Player) :-
+display_game(GameState, White) :-
     write_board(GameState), nl,
-    write_player(Player), write(' has the first move!'), nl, nl.
+    write_white(White), write(' has the first move!'), nl, nl.
 
 % Main Predicate
 play :-

@@ -51,6 +51,16 @@ write_board([Head|Tail]) :-
     write_board(Tail).
 
 
+% writes instructions to select orientaion of piece
+write_orientation() :-
+    nl, write('Piece orientaions:'), nl,
+    write('(1)          (2)          (3)          (4)   '), nl,
+    write('    |            |            |            | '), nl,
+    write('    v            v            v            v '), nl,
+    write('-->[W, B]    -->[B, W]    -->[W,       -->[B,'), nl,
+    write('                              B]           W]'), nl.
+
+
 % predicate that returns the inital board state
 initial(GameState) :-
     nl, write('Initial State Board'), nl,
@@ -66,4 +76,11 @@ end(GameState) :-
     nl, write('End State Board'), nl,
     end_board(GameState).
 
+/*
+(1)          (2)          (3)          (4)
+    |            |            |            |
+    v            v            v            v
+-->[W, B]    -->[B, W]    -->[W,       -->[B,
+                              B]           W]
+*/
 
