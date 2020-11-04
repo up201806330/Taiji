@@ -2,13 +2,14 @@
 :- use_module(library(random)).
 :- [display, board_examples].
 
+write_white(0) :- write('The Player (White)').
+write_white(1) :- write('The Computer (White)').
+write_black(0) :- write('The Player (Black)').
+write_black(1) :- write('The Computer (Black)').
 
-write_player(0) :- write('Player 1 (White)').
-write_player(1) :- write('Player 2 (Black)').
-
-% Determining at random what player gets to have the first turn
-random_player_number(Player) :-
-    random(0, 2, Player).
+% Determining at random whether the player or the computer get to be white (0 is player, 1 is computer)
+random_white_number(White) :-
+    random(0, 2, White).
 
 % Board Visualization Predicate
 display_game(GameState, Player) :-
@@ -17,9 +18,9 @@ display_game(GameState, Player) :-
 
 % Main Predicate
 play :-
-    random_player_number(Player),
+    random_white_number(White),
     initial(GameState),
-    display_game(GameState, Player).
+    display_game(GameState, White).
 
 % HOW TO "TEST"
 % - Consult myTaiji.pl

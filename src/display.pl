@@ -51,7 +51,6 @@ write_board([Head|Tail]) :-
     write_board(Tail).
 
 
-
 % predicate that returns the inital board state
 initial(GameState) :-
     nl, write('Initial State Board'), nl,
@@ -66,3 +65,5 @@ intermediate(GameState) :-
 end(GameState) :-
     nl, write('End State Board'), nl,
     end_board(GameState).
+
+
