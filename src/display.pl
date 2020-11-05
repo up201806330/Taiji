@@ -31,6 +31,7 @@ write_char(73) :- write('I ').
 write_char(74) :- write('J ').
 write_char(75) :- write('K ').
 
+% ---------------------------------------------------------------
 
 % base case of a line of the board
 write_line([]).
@@ -50,6 +51,27 @@ write_board([Head|Tail]) :-
     write_line(Head), nl,
     write_board(Tail).
 
+% ---------------------------------------------------------------
+
+% Displays the menu where the user chooses the size of the board
+write_board_size_menu :-
+    horizontal_line, nl,
+    write(  '       Choose your desired board size      '), nl, nl,
+    write(  '               1.  7  x  7                 '), nl,
+    write(  '               2.  9  x  9                 '), nl,
+    write(  '               3.  11 x 11                 '), nl,
+    horizontal_line, nl.
+
+% Displays the menu where the user chooses the "mode" to play
+write_mode_pvp_ai_menu :-
+    horizontal_line, nl,
+    write(  '       Choose your desired mode      '), nl, nl,
+    write(  '          1.  Player vs Player        '), nl,
+    write(  '          2.  Player vs AI            '), nl,
+    write(  '          3.  AI vs AI (???)          '), nl,
+    horizontal_line, nl.
+
+% ---------------------------------------------------------------
 
 % writes instructions to select orientaion of piece
 write_orientation :-
@@ -60,6 +82,8 @@ write_orientation :-
     write('-->[W, B]    -->[B, W]    -->[W,       -->[B,'), nl,
     write('                              B]           W]'), nl.
 
+
+% ---------------------------------------------------------------
 
 % predicate that returns the inital board state
 initial(GameState) :-

@@ -1,17 +1,8 @@
-horizontal_line :-
-    write(  '-------------------------------------------'), nl.
+%:- [display].
 
-write_user_insert_input :-
-    write('     :- '). 
-
-enter_to_continue:-
-	write('Press Enter to continue.'), nl,
-	write_user_insert_input, get_char(_), !.
-
-% https://swi-prolog.discourse.group/t/useful-command-to-clear-the-console/976
-clear_terminal :-
-    write('\e[H\e[2J').
-
+% Displays the name of the game
+% From: http://patorjk.com/software/taag/#p=testall&h=1&v=0&f=Dancing%20Font&t=Taiji
+% Font Name: Ivrit
 taiji_ascii :-
     nl, nl,
     horizontal_line,
@@ -23,28 +14,37 @@ taiji_ascii :-
     write(  '                        |__/       '), nl,
     horizontal_line.
 
-board_size_menu :-
-    write_board_size_menu,
-    write_user_insert_input,
-    get_char(Input), get_char(_),
-    (   Input = '1' -> write('User wrote 1'), nl;
-        Input = '2' -> write('User wrote 2'), nl;
-        Input = '3' -> write('User wrote 3'), nl;
+
+% Board size Menu
+board_size_menu(GameState) :-
+    write_board_size_menu,                          % Displays the menu
+    write_user_insert_input,                        % Displays line where the user will write input
+    get_char(Input), get_char(_),                   % Input Handling ("Switch")
+    (   % Input = '1' -> /* write('User wrote 1'), */ nl, nl;
+        % Input = '2' -> /* write('User wrote 2'), */ nl, nl;
+        Input = '3' -> /* write('User wrote 3'), */ initial(GameState), nl;
     
-    nl, write('Invalid Option'), nl,
-    enter_to_continue, nl, write('Past'),
-    clear_terminal, board_size_menu
+    nl, write('Invalid Option'), nl,                % "Else statement"
+    enter_to_continue, nl,
+    clear_terminal, board_size_menu(GameState)
     ).
 
 
-write_board_size_menu :-
-    horizontal_line, nl,
-    write(  '       Choose your desired board size      '), nl, nl,
-    write(  '               1.  7  x  7                 '), nl,
-    write(  '               2.  9  x  9                 '), nl,
-    write(  '               3.  11 x 11                 '), nl,
-    horizontal_line, nl.
 
+
+% Player vs Player / Player vs AI menu
+mode_pvp_ai_menu(GameState) :-
+    write_mode_pvp_ai_menu,                         % Displays the menu
+    write_user_insert_input,                        % Displays line where the user will write input
+    get_char(Input), get_char(_),                   % Input Handling ("Switch")
+    (   Input = '1' -> /* write('User wrote 1'), */ player_vs_player(GameState), nl, nl;
+        % Input = '2' -> /* write('User wrote 2'), */ nl, nl;
+        % Input = '3' -> /* write('User wrote 3'), */ nl;
+    
+    nl, write('Invalid Option'), nl,                % "Else statement"
+    enter_to_continue, nl,
+    clear_terminal, mode_pvp_ai_menu(GameState)
+    ).
 
 
 

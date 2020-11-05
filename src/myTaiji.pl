@@ -1,6 +1,6 @@
 % Consulting Files / Modules
 :- use_module(library(random)).
-:- [display, board_examples, menus].
+:- [logic, menus, display, board_examples, utils].
 
 write_white(0) :- write('The Player (White)').
 write_white(1) :- write('The Computer (White)').
@@ -19,10 +19,12 @@ display_game(GameState, White) :-
 % Main Predicate
 play :-
     taiji_ascii, nl, nl,
-    board_size_menu, nl.
+    board_size_menu(GameState), nl,
+    mode_pvp_ai_menu(GameState).
+    % , nl, 
     % random_white_number(White),
-    % initial(GameState),
-    % display_game(GameState, White).
+    % turn(GameState, White).
+    
 
 % HOW TO "TEST"
 % - Consult myTaiji.pl
