@@ -15,12 +15,21 @@
 
 
 
-turn(GameState, White) :-
+turn(GameState, Player) :-
+    check_full_board(GameState),
     nl, nl, write(' TURN '), nl, nl,
-    display_game(GameState, White).
+    display_game(GameState, Player),
+    play_piece(GameState),
+    enter_to_continue,
+    turn(GameState, Player).
 
+play_piece(GameState) :-
+    write('Played Piece'), nl.
 
-% 
+check_full_board(GameState) :-
+    write('Not Full'), nl.
+
+% Player vs Player Mode
 player_vs_player(GameState) :-
     random_white_number(White),
     turn(GameState, White).
