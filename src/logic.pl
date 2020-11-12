@@ -16,27 +16,29 @@
 
 
 turn(GameState, Player, Color) :-
-    check_full_board(GameState),
+    nl,
+    % valid_moves(GameState, Player, ListOfMoves).
+    game_over(GameState, Winner),
     nl, nl, write(' TURN '), nl, nl,
     display_game(GameState, Player, Color),
     play_piece(GameState),
     enter_to_continue,
-    change_player(Player, NewPlayer),
-    change_player(Color, NewColor),
+    alternate_value(Player, NewPlayer),
+    alternate_value(Color, NewColor),
+    nl, horizontal_line,
     turn(GameState, NewPlayer, NewColor).
 
 
-change_player(Player, NewPlayer) :-
-    ( Player = 0
-    ->  NewPlayer = 1   % if the player is 0 change it to 1
-    ;   NewPlayer = 0   % else the player is 1 and changes it to 0
+alternate_value(Value, NewValue) :-
+    ( Value = 0
+    ->  NewValue = 1   % if the value is 0 change it to 1
+    ;   NewValue = 0   % else the value is 1 and changes it to 0
     ).
-    % write('Changed Player'), nl.
 
 play_piece(GameState) :-
     write('Played Piece'), nl.
 
-check_full_board(GameState) :-
+game_over(GameState, Winner) :-
     write('Not Full'), nl.
 
 % Player vs Player Mode
@@ -45,3 +47,16 @@ player_vs_player(GameState) :-
     turn(GameState, White, 0).
 
 
+valid_moves(GameState, Player, ListOfMoves) :-
+    iterate_matrix(GameState).
+
+iterate_matrix([]).
+
+iterate_matrix([H|T]) :-
+    iterate_row(H), nl,
+    iterate_matrix(T).
+
+iterate_row([]).
+iterate_row([H|T]) :-
+    write('Element of row: '), write(H), nl,
+    iterate_row(T).

@@ -87,7 +87,8 @@ write_orientation :-
 
 % predicate that returns the inital board state
 initial(GameState) :-
-    nl, write('Initial State Board'), nl,
+    % nl, write('Initial State Board'),
+    nl,
     initial_board(GameState).
 
 % predicate that returns the intermediate board state
