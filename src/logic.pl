@@ -15,13 +15,23 @@
 
 
 
-turn(GameState, Player) :-
+turn(GameState, Player, Color) :-
     check_full_board(GameState),
     nl, nl, write(' TURN '), nl, nl,
-    display_game(GameState, Player),
+    display_game(GameState, Player, Color),
     play_piece(GameState),
     enter_to_continue,
-    turn(GameState, Player).
+    change_player(Player, NewPlayer),
+    change_player(Color, NewColor),
+    turn(GameState, NewPlayer, NewColor).
+
+
+change_player(Player, NewPlayer) :-
+    ( Player = 0
+    ->  NewPlayer = 1   % if the player is 0 change it to 1
+    ;   NewPlayer = 0   % else the player is 1 and changes it to 0
+    ).
+    % write('Changed Player'), nl.
 
 play_piece(GameState) :-
     write('Played Piece'), nl.
@@ -32,6 +42,6 @@ check_full_board(GameState) :-
 % Player vs Player Mode
 player_vs_player(GameState) :-
     random_white_number(White),
-    turn(GameState, White).
+    turn(GameState, White, 0).
 
 
