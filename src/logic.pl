@@ -30,10 +30,7 @@ turn(GameState, Player, Color) :-
 
 
 alternate_value(Value, NewValue) :-
-    ( Value = 0
-    ->  NewValue = 1   % if the value is 0 change it to 1
-    ;   NewValue = 0   % else the value is 1 and changes it to 0
-    ).
+    NewValue is (Value + 1) mod 2.
 
 play_piece(GameState) :-
     write('Played Piece'), nl.
