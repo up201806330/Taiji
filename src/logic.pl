@@ -13,6 +13,17 @@
 % count_score(Board, WhiteScore, BlackScore):-().
 
 
+% Player vs Player Mode
+player_vs_player(GameState) :-
+    random_white_number(White),
+    turn(GameState, White, 0).
+
+
+alternate_value(Value, NewValue) :-
+    NewValue is (Value + 1) mod 2.
+
+game_over(GameState, Winner) :-
+    write('Not Full'), nl.
 
 
 turn(GameState, Player, Color) :-
@@ -29,26 +40,40 @@ turn(GameState, Player, Color) :-
     turn(GameState, NewPlayer, NewColor).
 
 
-alternate_value(Value, NewValue) :-
-    NewValue is (Value + 1) mod 2.
-
 play_piece(GameState) :-
+    get_input_piece(Row, Col),
+    % validate_row(GameState, Row),
+    validate_col(GameState, Col),
     write('Played Piece'), nl.
 
-game_over(GameState, Winner) :-
-    write('Not Full'), nl.
+validate_col(GameState, Col) :-
+    write('Validate Row'), nl,
+    % atom_number(Col, Col_N),
+    % write("Number ~d", Col_N).
 
-% Player vs Player Mode
-player_vs_player(GameState) :-
-    random_white_number(White),
-    turn(GameState, White, 0).
+    % length(GameState, NumCols),
+    Col @> 0,
+    % write('hi'), nl,
+    % Col_ > (NumCols-1),
+    format("Col: ~p\n", Col).
+
+
+get_input_piece(InputRow, InputCol) :-
+    write('White Piece Row: '), get_char(InputRow), get_char(_), nl,
+    write('White Piece Col: '), get_char(InputCol), get_char(_), nl,
+    nl,
+    format("User Row: ~p | User Col: ~p", [InputRow, InputCol]), nl.
+    %write(InputRow), write(' '), write(InputCol), nl.
+
+
+
 
 
 valid_moves(GameState, Player, ListOfMoves) :-
     iterate_matrix(GameState).
 
-iterate_matrix([]).
 
+iterate_matrix([]).
 iterate_matrix([H|T]) :-
     iterate_row(H), nl,
     iterate_matrix(T).
