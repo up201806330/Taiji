@@ -11,15 +11,28 @@ write_black(1) :- write('The Computer (Black)').
 random_white_number(White) :-
     random(0, 2, White).
 
-% Board Visualization Predicate
-display_game(GameState, Player, ColorPlayer) :-
-    write_board(GameState), nl,
 
-    ( ColorPlayer = 0
-    -> write_white(Player), nl
-    ; write_black(Player), nl
-    ).
-    % write_white(Player), write(' has the first move!'), nl, nl.
+
+% Board Visualization Predicate
+display_game(GameState, Player, 0) :-
+    write_board(GameState), nl,
+    write_white(Player), nl.
+
+display_game(GameState, Player, 1) :-
+    write_board(GameState), nl,
+    write_black(Player), nl.
+
+
+% display_game(GameState, Player, ColorPlayer) :-
+%     write_board(GameState), nl,
+
+%     ( ColorPlayer = 0
+%     -> write_white(Player), nl
+%     ; write_black(Player), nl
+%     ).
+%     % write_white(Player), write(' has the first move!'), nl, nl.
+
+
 
 % Main Predicate
 play :-
