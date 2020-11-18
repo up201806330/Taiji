@@ -1,5 +1,6 @@
 % Consulting Files / Modules
 :- use_module(library(random)).
+:- use_module(library(lists)).
 :- [logic, menus, display, board_examples, utils].
 
 write_white(0) :- write('The Player (White)').
