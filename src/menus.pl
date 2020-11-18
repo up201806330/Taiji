@@ -34,7 +34,6 @@ board_size_menu(GameState) :-
 
 % Player vs Player / Player vs AI menu
 mode_pvp_ai_menu(GameState) :-
-    repeat,
     write_mode_pvp_ai_menu,                         % Displays the menu
     write_user_insert_input,                        % Displays line where the user will write input
     get_char(Input), get_char(_),                   % Input Handling ("Switch")
@@ -44,7 +43,7 @@ mode_pvp_ai_menu(GameState) :-
     
     nl, write('Invalid Option'), nl,                % "Else statement"
     enter_to_continue, nl,
-    clear_terminal % mode_pvp_ai_menu(GameState)
+    clear_terminal, mode_pvp_ai_menu(GameState)
     ).
 
 
