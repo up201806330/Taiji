@@ -33,9 +33,18 @@ turn(GameState, Player, Color) :-
     nl, nl, write(' TURN '), nl, nl,
     display_game(GameState, Player, Color),
     
+    get_input_piece(InputRow, InputCol),
+    convert_input_row(InputRow, Row),
+
+    Row @> 0, Row @< 12,
+    InputCol @> 0, InputCol @< 12,
+
+    show_options, nl,
+    read(Option),
+    
     % play_piece(GameState, NewGameState),
     (
-        play_piece(GameState, NewGameState) -> success_play(Player, NewPlayer, Color, NewColor, NewGameState)
+        play_piece(GameState, Row, InputCol, Option, NewGameState) -> success_play(Player, NewPlayer, Color, NewColor, NewGameState)
             % enter_to_continue,
             % alternate_value(Player, NewPlayer),
             % alternate_value(Color, NewColor),
@@ -61,15 +70,14 @@ success_play(Player, NewPlayer, Color, NewColor, NewGameState) :-
     nl, horizontal_line,
     turn(NewGameState, NewPlayer, NewColor).
 
-play_piece(GameState, NewGameState1) :-
-    get_input_piece(InputRow, InputCol),
-    convert_input_row(InputRow, Row),
-    % convert_input_col(InputCol, Col),
+play_piece(GameState, Row, InputCol, Option, NewGameState1) :-
+    % get_input_piece(InputRow, InputCol),
+    % convert_input_row(InputRow, Row),
 
-    Row @> 0, Row @< 12,
-    InputCol @> 0, InputCol @< 12,
+    % Row @> 0, Row @< 12,
+    % InputCol @> 0, InputCol @< 12,
 
-    get_black_piece(Row, InputCol, BlackRow, BlackCol),
+    get_black_piece(Row, InputCol, Option, BlackRow, BlackCol),
 
     replace_(GameState, Row, InputCol, white, NewGameState),
     replace_(NewGameState, BlackRow, BlackCol, black, NewGameState1),
@@ -79,9 +87,13 @@ play_piece(GameState, NewGameState1) :-
     write('Played Piece'), nl.
 
 
-get_black_piece(Row, Col, NewRow, NewCol) :-
-    show_options, nl,
-    read(Option),
+valid_moves(GameState, _Player, Solucoes) :-
+    findall(NewGameState1, play_piece(), Solucoes)
+
+
+get_black_piece(Row, Col, Option, NewRow, NewCol) :-
+    % show_options, nl,
+    % read(Option),
     black_move_part(Row, Col, NewRow, NewCol, Option).
 
 show_options :-
