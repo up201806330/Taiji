@@ -32,13 +32,34 @@ turn(GameState, Player, Color) :-
     game_over(GameState, Winner),
     nl, nl, write(' TURN '), nl, nl,
     display_game(GameState, Player, Color),
-    play_piece(GameState, NewGameState),
+    
+    % play_piece(GameState, NewGameState),
+    (
+        play_piece(GameState, NewGameState) -> success_play(Player, NewPlayer, Color, NewColor, NewGameState)
+            % enter_to_continue,
+            % alternate_value(Player, NewPlayer),
+            % alternate_value(Color, NewColor),
+            % nl, horizontal_line,
+            % turn(NewGameState, NewPlayer, NewColor)
+            ;
+            nl, write('Invalid Option'), nl,                % "Else statement"
+            enter_to_continue, nl,
+            clear_terminal, turn(GameState, Player, Color)
+    )
+    .
+
+    % enter_to_continue,
+    % alternate_value(Player, NewPlayer),
+    % alternate_value(Color, NewColor),
+    % nl, horizontal_line,
+    % turn(NewGameState, NewPlayer, NewColor).
+
+success_play(Player, NewPlayer, Color, NewColor, NewGameState) :-
     enter_to_continue,
     alternate_value(Player, NewPlayer),
     alternate_value(Color, NewColor),
     nl, horizontal_line,
     turn(NewGameState, NewPlayer, NewColor).
-
 
 play_piece(GameState, NewGameState1) :-
     get_input_piece(InputRow, InputCol),
