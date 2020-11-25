@@ -32,53 +32,97 @@ turn(GameState, Player, Color) :-
     game_over(GameState, Winner),
     nl, nl, write(' TURN '), nl, nl,
     display_game(GameState, Player, Color),
-    play_piece(GameState),
+    play_piece(GameState, NewGameState),
+    % play_piece(NewGameState, NewGameState1, black),
     enter_to_continue,
     alternate_value(Player, NewPlayer),
     alternate_value(Color, NewColor),
     nl, horizontal_line,
-    turn(GameState, NewPlayer, NewColor).
+    turn(NewGameState, NewPlayer, NewColor).
 
 
-play_piece(GameState) :-
-    get_input_piece(Row, Col),
-    % validate_row(GameState, Row),
-    validate_col(GameState, Col),
+play_piece(GameState, NewGameState1) :-
+    get_input_piece(InputRow, InputCol),
+    convert_input_row(InputRow, Row),
+    % convert_input_col(InputCol, Col),
+    Row @> 0, Row @< 12,
+    InputCol @> 0, InputCol @< 12,
+    write('\npassed\n'),
+
+    % get_black_piece(Row, InputCol, NewRow, NewCol),
+
+    replace_(GameState, Row, InputCol, white, NewGameState),
+    % write('hi\n'),
+    % get_second_piece(Row, Col),
+    % write('\npre black'),
+    % replace_(NewGameState, 3, 4, black, NewGameState1),
     write('Played Piece'), nl.
 
-validate_col(GameState, Col) :-
-    write('Validate Row'), nl,
-    % atom_number(Col, Col_N),
-    % write("Number ~d", Col_N).
 
-    % length(GameState, NumCols),
-    Col @> 0,
-    % write('hi'), nl,
-    % Col_ > (NumCols-1),
-    format("Col: ~p\n", Col).
+% get_black_piece(Row, Col, NewRow, NewCol) :-
+%     ask_options,
+%     read(),
+%     check_option
+
+% get_second_piece(Row, Col) :-
+%     RowU is Row - 1.
+
+
+% ----------------------------------------------------------------
+replace_( [L|Ls] , 0 , Y , Z , [R|Ls] ) :- % once we find the desired row,
+  replace_column(L,Y,Z,R)                 % - we replace specified column, and we're done.
+  .                                       %
+replace_( [L|Ls] , X , Y , Z , [L|Rs] ) :- % if we haven't found the desired row yet
+  X > 0 ,                                 % - and the row offset is positive,
+  X1 is X-1 ,                             % - we decrement the row offset
+  replace_( Ls , X1 , Y , Z , Rs )         % - and recurse down
+  .                                       %
+
+replace_column( [COld|Cs] , 0 , Z , [Z|Cs] ) :-
+    compare(=, COld, 'clear')               % <--- checks if clear
+    .                                       % once we find the specified offset, just make the substitution and finish up.
+replace_column( [C|Cs] , Y , Z , [C|Rs] ) :- % otherwise,
+  Y > 0 ,                                    % - assuming that the column offset is positive,
+  Y1 is Y-1 ,                                % - we decrement it
+  replace_column( Cs , Y1 , Z , Rs )         % - and recurse down.
+  .
+% ----------------------------------------------------------------
+
+
 
 
 get_input_piece(InputRow, InputCol) :-
     write('White Piece Row: '), get_char(InputRow), get_char(_), nl,
-    write('White Piece Col: '), get_char(InputCol), get_char(_), nl,
+    % write('White Piece Col: '), get_char(InputCol), get_char(_), nl,
+    write('White Piece Col: '), read(InputCol), get_char(_), nl,
+    write(InputCol),
     nl,
     format("User Row: ~p | User Col: ~p", [InputRow, InputCol]), nl.
-    %write(InputRow), write(' '), write(InputCol), nl.
 
 
 
+% ----------------------------------------------------------------
+convert_input_row('A', 1).
+convert_input_row('B', 2).
+convert_input_row('C', 3).
+convert_input_row('D', 4).
+convert_input_row('E', 5).
+convert_input_row('F', 6).
+convert_input_row('G', 7).
+convert_input_row('H', 8).
+convert_input_row('I', 9).
+convert_input_row('J', 10).
+convert_input_row('K', 11).
 
-
-valid_moves(GameState, Player, ListOfMoves) :-
-    iterate_matrix(GameState).
-
-
-iterate_matrix([]).
-iterate_matrix([H|T]) :-
-    iterate_row(H), nl,
-    iterate_matrix(T).
-
-iterate_row([]).
-iterate_row([H|T]) :-
-    write('Element of row: '), write(H), nl,
-    iterate_row(T).
+convert_input_col('1', 1).
+convert_input_col('2', 2).
+convert_input_col('3', 3).
+convert_input_col('4', 4).
+convert_input_col('5', 5).
+convert_input_col('6', 6).
+convert_input_col('7', 7).
+convert_input_col('8', 8).
+convert_input_col('9', 9).
+convert_input_col('10', 10).
+convert_input_col('11', 11).
+% ----------------------------------------------------------------

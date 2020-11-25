@@ -1,7 +1,7 @@
 
 % Start State Board
 initial_board([
-[clear,   48,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58],
+[clear,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58,   59],
 [   65,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
 [   66,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
 [   67,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear,clear],
@@ -17,7 +17,7 @@ initial_board([
 
 % Intermediate State Board
 intermediate_board([
-[clear,   48,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58],
+[clear,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58,   59],
 [   65,black,white,clear,clear,clear,clear,clear,clear,clear,clear,clear],
 [   66,clear,black,clear,clear,clear,clear,clear,clear,clear,clear,clear],
 [   67,clear,white,clear,clear,clear,clear,clear,clear,clear,clear,clear],
@@ -33,7 +33,7 @@ intermediate_board([
 
 % End State Board
 end_board([
-[clear,   48,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58],
+[clear,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58,   59],
 [   65,black,white,white,white,black,white,clear,white,black,white,black],
 [   66,clear,black,black,black,black,white,white,black,clear,white,black],
 [   67,black,white,black,black,white,white,white,black,black,white,white],
