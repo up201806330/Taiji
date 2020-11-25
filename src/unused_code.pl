@@ -64,3 +64,26 @@ say_hi :-
 % repeat.
 % repeat :-
 %     repeat.
+
+
+
+
+
+% access( [L|Ls] , 0 , Y , Z , [R|Ls] ) :-
+%   access_column(L,Y,Z,R)                 
+%   .                                      
+% access( [L|Ls] , X , Y , Z , [L|Rs] ) :- 
+%   X > 0 ,                                
+%   X1 is X-1 ,                            
+%   access( Ls , X1 , Y , Z , Rs )        
+%   .                                      
+
+% access_column( [COld|Cs] , 0 , Z , [COld|Cs] ) :-
+%     write('\nPiece: '),
+%     write(COld), nl              
+%     .                                      
+% access_column( [C|Cs] , Y , Z , [C|Rs] ) :- 
+%   Y > 0 ,                                   
+%   Y1 is Y-1 ,                                
+%   access_column( Cs , Y1 , Z , Rs )    
+%   .
