@@ -196,3 +196,96 @@ convert_input_col('9', 9).
 convert_input_col('10', 10).
 convert_input_col('11', 11).
 % ----------------------------------------------------------------
+
+
+
+% ----------------------------------------------------------------
+% Score
+
+% Gets element at (I, J) coordinates of a matrix
+% color(+Matrix, +(I, J), -Color)
+color(Matrix, (I, J), Color) :-
+    nth0(I, Matrix, Row),
+    nth0(J, Row, Color).
+
+% Returns all combinations of adjacent coordinates ; Checks bounds with L
+% adjacent(+(X,Y), -(X, Yy), +L)
+adjacent((X,Y), (X, Yy), L) :-
+   (
+    Yy is min(Y + 1, L - 1) 
+   ; 
+    Yy is max(Y - 1, 0)
+    ),
+    dif((X, Y), (X, Yy)).
+adjacent((X,Y), (Xx, Y), L) :-
+   (
+    Xx is min(X + 1, L - 1)
+   ;
+    Xx is max(X - 1, 0)
+    ),
+    dif((X, Y), (Xx, Y)).
+
+remove_list([], _, []).
+remove_list([X|Tail], L2, Result):- member(X, L2), !, remove_list(Tail, L2, Result). 
+remove_list([X|Tail], L2, [X|Result]):- remove_list(Tail, L2, Result).
+
+atl(_, [], []).
+atl(List, [H|T], R) :-
+    (  member(H, List)
+    -> R = Res
+    ;  R = [H|Res]
+    ),
+    atl(List, T, Res).
+
+% Removes elements in B from A and returns in L
+% addToList(+A, +B, -L)
+addToList(A, B, L) :-
+    atl(A, B, R),
+    append(A, R, L).
+
+% dfs(+GameState, +Color, +ToVisit,+ VisitedIn, +DepthIn, -VisitedOut, -DepthOut)
+%% Done, all visited 
+dfs(_, _, [], VisitedIn, DepthIn, VisitedOut, DepthOut):-
+    (DepthIn \= 1 -> DepthOut is DepthIn ; DepthOut is 0), 
+    append([], VisitedIn, VisitedOut),
+    !.
+%% If has already been visited, skips
+dfs(GameState, Color, [H|T], VisitedIn, DepthIn, VisitedOut, DepthOut) :-
+    member(H,VisitedIn),
+    dfs(GameState, Color, T, VisitedIn, DepthIn, VisitedOut, DepthOut).
+%% If isn't correct color, skips and adds to visited
+dfs(GameState, Color, [H|T], VisitedIn, DepthIn, VisitedOut, DepthOut) :-
+    color(GameState, H, C), 
+    C \= Color,
+    dfs(GameState, Color, T, [H|VisitedIn], DepthIn, VisitedOut, DepthOut).
+%% Add all neigbors of the head to the toVisit
+dfs(GameState, Color, [H|T], VisitedIn, DepthIn, VisitedOut, DepthOut) :-
+    length(GameState, L),
+    findall((X, Y), adjacent((H), (X,Y), L), Nbs),
+    addToList(Nbs,T, ToVisit),
+    NewDepthIn is DepthIn + 1,
+    dfs(GameState, Color, ToVisit, [H|VisitedIn], NewDepthIn, VisitedOut, DepthOut).
+
+% algorithm(+GameState, +Color, +ToVisit, +Accumulator, +VisitedIn, -Value)
+algorithm(_, _, [], Accumulator, _, Value):-
+    Value is Accumulator.
+algorithm(GameState, Color, [H|T], Accumulator, VisitedIn, Value):-
+    dfs(GameState, Color, [H], VisitedIn, 0, VisitedOut, X),
+    NewAccumulator is Accumulator + X,
+    algorithm(GameState, Color, T, NewAccumulator, VisitedOut, Value).
+
+% Returns lists with all indexes of square arrays of length L
+% indexes_from_length(+L -Output)
+indexes_from_length(L,Output):-
+    (L =:= 7 -> append([], [(0,0),(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,0),(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(2,0),(2, 1),(2,2),(2,3),(2,4),(2,5),(2,6),(3,0),(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(4,0),(4,1),(4,2),(4,3),(4,4),(4,5),(4,6),(5,0),(5,1),(5,2),(5,3),(5,4),(5,5),(5,6),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6)], Output);
+    L =:= 9 -> append([], [(0,0),(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(1,0),(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(2,0),(2,1),(2,2),(2,3),(2,4),(2,5),(2,6),(2,7),(2,8),(3,0),(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(3,8),(4,0),(4,1),(4,2),(4,3),(4,4),(4,5),(4,6),(4,7),(4,8),(5,0),(5,1),(5,2),(5,3),(5,4),(5,5),(5,6),(5,7),(5,8),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(6,7),(6,8),(7,0),(7,1),(7,2),(7,3),(7,4),(7,5),(7,6),(7,7),(7,8),(8,0),(8,1),(8,2),(8,3),(8,4),(8,5),(8,6),(8,7),(8,8)], Output);
+    L =:= 11 -> append([], [(0,0),(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(0,10),(1,0),(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(2,0),(2,1),(2,2),(2,3),(2,4),(2,5),(2,6),(2,7),(2,8),(2,9),(2,10),(3,0),(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(3,8),(3,9),(3,10),(4,0),(4,1),(4,2),(4,3),(4,4),(4,5),(4,6),(4,7),(4,8),(4,9),(4,10),(5,0),(5,1),(5,2),(5,3),(5,4),(5,5),(5,6),(5,7),(5,8),(5,9),(5,10),(6,0),(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(6,7),(6,8),(6,9),(6,10),(7,0),(7,1),(7,2),(7,3),(7,4),(7,5),(7,6),(7,7),(7,8),(7,9),(7,10),(8,0),(8,1),(8,2),(8,3),(8,4),(8,5),(8,6),(8,7),(8,8),(8,9),(8,10),(9,0),(9,1),(9,2),(9,3),(9,4),(9,5),(9,6),(9,7),(9,8),(9,9),(9,10),(10,0),(10,1),(10,2),(10,3),(10,4),(10,5),(10,6),(10,7),(10,8),(10,9),(10,10)], Output);
+    fail).
+
+value(GameState, Color, Value):-
+    L is length(GameState),
+    indexes_from_length(L, ToVisit),
+    algorithm(GameState, Color, ToVisit, 0, [], Value).
+
+
+% ----------------------------------------------------------------
