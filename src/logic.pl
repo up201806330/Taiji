@@ -41,10 +41,14 @@ turn(GameState, Player, Color) :-
 
     show_options, nl,
     read(Option),
+
+    get_black_piece(Row, InputCol, Option, BlackRow, BlackCol),
     
+    Move = [[Row, InputCol],[BlackRow, BlackCol]],
     % play_piece(GameState, NewGameState),
     (
-        play_piece(GameState, Row, InputCol, Option, NewGameState) -> success_play(Player, NewPlayer, Color, NewColor, NewGameState)
+        % play_piece(GameState, Row, InputCol, Option, NewGameState)
+        move(GameState, Move, NewGameState) -> success_play(Player, NewPlayer, Color, NewColor, NewGameState)
             % enter_to_continue,
             % alternate_value(Player, NewPlayer),
             % alternate_value(Color, NewColor),
@@ -70,25 +74,38 @@ success_play(Player, NewPlayer, Color, NewColor, NewGameState) :-
     nl, horizontal_line,
     turn(NewGameState, NewPlayer, NewColor).
 
-play_piece(GameState, Row, InputCol, Option, NewGameState1) :-
-    % get_input_piece(InputRow, InputCol),
-    % convert_input_row(InputRow, Row),
-
-    % Row @> 0, Row @< 12,
-    % InputCol @> 0, InputCol @< 12,
-
-    get_black_piece(Row, InputCol, Option, BlackRow, BlackCol),
-
-    replace_(GameState, Row, InputCol, white, NewGameState),
-    replace_(NewGameState, BlackRow, BlackCol, black, NewGameState1),
-
-    % replace_(GameState, Row, InputCol, white, NewGameState), <-------
-
-    write('Played Piece'), nl.
 
 
-valid_moves(GameState, _Player, Solucoes) :-
-    findall(NewGameState1, play_piece(), Solucoes)
+move(GameState, [White|[Black|_]], NewGameState) :- 
+  white_piece_move(GameState, White, NewGameState1), 
+  black_piece_move(NewGameState1, Black, NewGameState).
+
+white_piece_move(GameState, [Row | [Col|_]], NewGameState1) :-
+  replace_(GameState, Row, Col, white, NewGameState1).
+
+black_piece_move(NewGameState1, [Row | [Col|_]], NewGameState) :-
+  replace_(NewGameState1, Row, Col, black, NewGameState).
+
+
+% play_piece(GameState, Row, InputCol, Option, NewGameState1) :-
+%     % get_input_piece(InputRow, InputCol),
+%     % convert_input_row(InputRow, Row),
+
+%     % Row @> 0, Row @< 12,
+%     % InputCol @> 0, InputCol @< 12,
+
+%     % get_black_piece(Row, InputCol, Option, BlackRow, BlackCol),
+
+%     % replace_(GameState, Row, InputCol, white, NewGameState),
+%     % replace_(NewGameState, BlackRow, BlackCol, black, NewGameState1),
+
+%     % replace_(GameState, Row, InputCol, white, NewGameState), <-------
+
+%     write('Played Piece'), nl.
+
+
+% valid_moves(GameState, _Player, Solucoes) :-
+%     findall(NewGameState1, play_piece(), Solucoes)
 
 
 get_black_piece(Row, Col, Option, NewRow, NewCol) :-
