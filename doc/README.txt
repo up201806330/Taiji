@@ -9,7 +9,7 @@ up201806330@fe.up.pt Rafael Soares Ribeiro
 -----------------------------------------------------------------------------------
 Installation and Execution
 
-In order to run the game, first open SICStus and click on "File", then on "Consult" and select the file "myTaiji.pl". An alternative to this is to use the command consult('[path to myTaiji.pl]'). If using Windows, remember to double the char '\' to '\\' to prevent SICStus from recognizing the backslash as the Escape Character.
+In order to run the game, first open SICStus and click on "File", then on "Consult" and select the file "myTaiji.pl". As an alternative, use just the following command in the SICStus terminal: consult('[path to myTaiji.pl]'). If using Windows, remember to double the char '\' to '\\' to prevent SICStus from recognizing the backslash as the Escape Character.
 After this loading process, just type 'play.' to get into the game.
 
 -----------------------------------------------------------------------------------
