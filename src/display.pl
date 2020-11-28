@@ -88,14 +88,13 @@ write_mode_pvp_ai_menu :-
 
 % ---------------------------------------------------------------
 
-% Writes instructions to select orientaion of piece
-write_orientation :-
-    nl, write('Piece orientaions:'), nl,
-    write('(1)          (2)          (3)          (4)   '), nl,
-    write('    |            |            |            | '), nl,
-    write('    v            v            v            v '), nl,
-    write('-->[W, B]    -->[B, W]    -->[W,       -->[B,'), nl,
-    write('                              B]           W]'), nl.
+% Writes to screen visual representation of the 4 Taijitu orientations
+show_orientations :-
+    write('    (1)                    (2)      '), nl,
+    write('  [white, black]  [black, white]    '), nl, nl,
+    write('    (3)                    (4)      '), nl,
+    write('  [white,                [black,    '), nl,
+    write('   black]                 white]    '), nl.
 
 
 % ---------------------------------------------------------------
@@ -130,7 +129,7 @@ display_game(GameState, Player, w) :-
     write_board(GameState), nl,
     write_white(Player), nl.
 
-display_game(GameState, Player, b) :-
+display_game(GameState, Player, 1) :-
     write_board(GameState), nl,
     write_black(Player), nl.
 

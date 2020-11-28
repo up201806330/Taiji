@@ -110,15 +110,6 @@ black_piece_move(NewGameState1, [Row | [Col|_]], NewGameState) :-
 
 % ----------------------------------------------------------------
 
-% Writes to screen visual representation of the 4 Taijitu orientations
-show_options :-
-    write('    (1)                    (2)      '), nl,
-    write('  [white, black]  [black, white]    '), nl, nl,
-    write('    (3)                    (4)      '), nl,
-    write('  [white,                [black,    '), nl,
-    write('   black]                 white]    '), nl.
-
-
 % Returns coordinates of black piece of Taijitu, according to chosen orientation
 % black_move_part(+Row, +Col, +Option, -BlackRow, -BlackCol)
 black_move_part(Row, Col, '1', Row, BlackCol) :- % black on the right
@@ -193,52 +184,11 @@ validate_position(InputRow, InputCol, ConvertedRow, ConvertedCol) :-
 % Gets the option of the orientation of the Taijitu from the user
 % input_orientation(-Option)
 input_orientation(Option) :-
-    show_options, nl,
+    show_orientations, nl,
     get_char(Option).
 
 % ----------------------------------------------------------------
 % Score
-
-% Gets element at (I, J) coordinates of a matrix
-% color(+Matrix, +(I, J), -Color)
-color(Matrix, (I, J), Color) :-
-    nth0(I, Matrix, Row),
-    nth0(J, Row, Color).
-
-% Returns all combinations of adjacent coordinates ; Checks bounds with L
-% adjacent(+(X,Y), -(X, Yy), +L)
-adjacent((X,Y), (X, Yy), L) :-
-   (
-    Yy is min(Y + 1, L - 1) 
-   ; 
-    Yy is max(Y - 1, 0)
-    ),
-    dif((X, Y), (X, Yy)).
-adjacent((X,Y), (Xx, Y), L) :-
-   (
-    Xx is min(X + 1, L - 1)
-   ;
-    Xx is max(X - 1, 0)
-    ),
-    dif((X, Y), (Xx, Y)).
-
-remove_list([], _, []).
-remove_list([X|Tail], L2, Result):- member(X, L2), !, remove_list(Tail, L2, Result). 
-remove_list([X|Tail], L2, [X|Result]):- remove_list(Tail, L2, Result).
-
-atl(_, [], []).
-atl(List, [H|T], R) :-
-    (  member(H, List)
-    -> R = Res
-    ;  R = [H|Res]
-    ),
-    atl(List, T, Res).
-
-% Removes elements in B from A and returns in L
-% addToList(+A, +B, -L)
-addToList(A, B, L) :-
-    atl(A, B, R),
-    append(A, R, L).
 
 % dfs(+GameState, +Color, +ToVisit,+ VisitedIn, +DepthIn, -VisitedOut, -DepthOut)
 %% Done, all visited 

@@ -36,3 +36,45 @@ replace_column( [C|Cs] , Y , Z , [C|Rs] ) :-    % otherwise,
   Y1 is Y-1 ,                                   % - we decrement it
   replace_column( Cs , Y1 , Z , Rs )            % - and recurse down.
   .
+
+
+% Gets element at (I, J) coordinates of a matrix
+% color(+Matrix, +(I, J), -Color)
+color(Matrix, (I, J), Color) :-
+    nth0(I, Matrix, Row),
+    nth0(J, Row, Color).
+
+% Returns all combinations of adjacent coordinates ; Checks bounds with L
+% adjacent(+(X,Y), -(X, Yy), +L)
+adjacent((X,Y), (X, Yy), L) :-
+   (
+    Yy is min(Y + 1, L - 1) 
+   ; 
+    Yy is max(Y - 1, 0)
+    ),
+    dif((X, Y), (X, Yy)).
+adjacent((X,Y), (Xx, Y), L) :-
+   (
+    Xx is min(X + 1, L - 1)
+   ;
+    Xx is max(X - 1, 0)
+    ),
+    dif((X, Y), (Xx, Y)).
+
+remove_list([], _, []).
+remove_list([X|Tail], L2, Result):- member(X, L2), !, remove_list(Tail, L2, Result). 
+remove_list([X|Tail], L2, [X|Result]):- remove_list(Tail, L2, Result).
+
+atl(_, [], []).
+atl(List, [H|T], R) :-
+    (  member(H, List)
+    -> R = Res
+    ;  R = [H|Res]
+    ),
+    atl(List, T, Res).
+
+% Removes elements in B from A and returns in L
+% addToList(+A, +B, -L)
+addToList(A, B, L) :-
+    atl(A, B, R),
+    append(A, R, L).
