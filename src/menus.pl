@@ -36,9 +36,9 @@ mode_pvp_ai_menu(GameState) :-
     write_mode_pvp_ai_menu,                         % Displays the menu
     write_user_insert_input,                        % Displays line where the user will write input
     get_char(Input), get_char(_),                   % Input Handling ("Switch")
-    (   Input = '1' -> selectGamemodeAndStart(pvp, GameState);
-        Input = '2' -> selectGamemodeAndStart(pve, GameState);
-        Input = '3' -> selectGamemodeAndStart(eve, GameState);
+    (   Input = '1' -> selectGamemodeAndStart(GameState, pvp);
+        Input = '2' -> selectGamemodeAndStart(GameState, pve);
+        Input = '3' -> selectGamemodeAndStart(GameState, eve);
     
     nl, write('Invalid Option'), nl,                % "Else statement"
     enter_to_continue, nl,

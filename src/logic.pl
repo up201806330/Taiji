@@ -2,74 +2,102 @@
 % check_move(Board, X1, Y1, X2, Y2):-().
 
 % Determining at random whether the first or second playing entities get to be white
-% (PVP: 0 is Player1, 1 is Player2 ; PVE: 0 is Player, 1 is Computer ; EVE: 0 is Computer1, 1 is Computer2)
-random_white_number(White) :-
+% (0 is Computer, 1 is Player1, 2 is Player2)
+% PVP -> Player1 Vs Player2
+random_white_number(pvp, White) :-
+    random(1, 3, White).
+% PVE -> Computer Vs Player1
+random_white_number(pve, White) :-
     random(0, 2, White).
+% EVE -> Computer Vs Computer
+random_white_number(eve, White) :-
+    White is 0.
 
 % Chooses random entity to be white color and starts game on selected gamemode (PVP, PVE, EVE)
+% selectGamemodeAndStart(+GameState, +Gamemode)
 selectGamemodeAndStart(GameState, Gamemode) :-
-    random_white_number(WhiteEntity),
-    turn(GameState, Gamemode, WhiteEntity, 0).
+    random_white_number(GameMode, WhiteEntity),
+    turn(GameState, Gamemode, WhiteEntity, w).
 
-alternate_value(Value, NewValue) :-
-    NewValue is (Value + 1) mod 2.
+% Switches to next player, depends on game mode
+% next_player(+Gamemode, +Player, -NextPlayer)
+next_player(pvp, 1, 2).
+next_player(pvp, 2, 1).
+next_player(pve, 0, 1).
+next_player(pve, 1, 0).
+next_player(pvp, 0, 0).
+
+% alternate_color(+Color, -NewColor)
+alternate_color(w, NewColor) :- NewColor is b.
+alternate_color(b, NewColor) :- NewColor is w.
+
+% ----------------------------------------------------------------
 
 game_over(GameState, Winner) :-
     write('Not Full'), nl.
 
 turn(GameState, Gamemode, Player, Color) :-
-    nl,
-    % valid_moves(GameState, Player, ListOfMoves).
-    game_over(GameState, Winner),
+    clear_terminal,
 
-    value(GameState, w, WhiteScore), value(GameState,b, BlackScore),
-    nl, nl, write('White: '), write(WhiteScore), write(' | Black: '), write(BlackScore), nl, nl,
+    % Check if its game over
+    % game_over(GameState, Winner),
 
-    display_game(GameState, Gamemode, Player, Color),
+    % Get and write scores for black and white pieces
+    value(GameState, w, WhiteScore), value(GameState, b, BlackScore),
+    nl, nl, write('White: '), write(WhiteScore), write(' | Black: '), write(BlackScore), nl, nl, 
+    !,
+
+    % Display board and who is playing currently
+    display_game(GameState, Player, Color),
     
-    get_input_piece(InputRow, InputCol),
-    convert_input_row(InputRow, Row),
+    % Get input from player to choose position of white piece of Taijitu
+    length(GameState, L),
+    input_position(InputRow, InputCol, L),
+    (
+        validate_position(InputRow, InputCol, ValidatedRow, ValidatedCol) -> true;
 
-    Row @> 0, Row @< 12,
-    InputCol @> 0, InputCol @< 12,
+        nl, write('Invalid Taijitu position!'), nl,                % "Else statement"
+        enter_to_continue, nl,
+        clear_terminal, turn(GameState, Gamemode, Player, Color)
+    ),
 
-    show_options, nl,
-    read(Option),
+    % Get input from player to choose orientation of the taijitu
+    input_orientation(Option),
+    (
+        validate_orientation(Option) -> true;
 
-    get_black_piece(Row, InputCol, Option, BlackRow, BlackCol),
+        nl, write('Invalid Taijitu orientation!'), nl,                % "Else statement"
+        enter_to_continue, nl,
+        clear_terminal, turn(GameState, Gamemode, Player, Color)
+    ),
     
-    Move = [[Row, InputCol],[BlackRow, BlackCol]],
+    % Get coords of black piece of Taijitu, according to chosen orientation
+    black_move_part(ValidatedRow, ValidatedCol, Option, BlackRow, BlackCol),
+    
+    Move = [[ValidatedRow, ValidatedCol],[BlackRow, BlackCol]],
     % play_piece(GameState, NewGameState),
     (
-        % play_piece(GameState, Row, InputCol, Option, NewGameState)
-        move(GameState, Move, NewGameState) -> success_play(Player, NewPlayer, Color, NewColor, NewGameState)
-            % enter_to_continue,
-            % alternate_value(Player, NewPlayer),
-            % alternate_value(Color, NewColor),
-            % nl, horizontal_line,
-            % turn(NewGameState, Gamemode, NewPlayer, NewColor)
-            ;
-            nl, write('Invalid Option'), nl,                % "Else statement"
-            enter_to_continue, nl,
-            clear_terminal, turn(GameState, Player, Color)
+        move(GameState, Move, NewGameState) -> success_play(NewGameState, Gamemode, Player, Color, NewPlayer, NewColor);
+        
+        nl, write('Cant place piece there!'), nl,                % "Else statement"
+        enter_to_continue, nl,
+        clear_terminal, turn(GameState, Gamemode, Player, Color)
     )
     .
+turn(_,_,_,_):- write('Error occured ; leaving').
 
-    % enter_to_continue,
-    % alternate_value(Player, NewPlayer),
-    % alternate_value(Color, NewColor),
-    % nl, horizontal_line,
-    % turn(NewGameState, Gamemode, NewPlayer, NewColor).
-
-success_play(Player, NewPlayer, Color, NewColor, NewGameState) :-
+% Called if Move is valid, continues to next turn with new GameState
+% success_play(+NewGameState, +Gamemode, +Player, +Color, -NewPlayer, -NewColor)
+success_play(NewGameState, Gamemode, Player, Color, NewPlayer, NewColor) :-
+    nl, write('Success'), nl,
     enter_to_continue,
-    alternate_value(Player, NewPlayer),
-    alternate_value(Color, NewColor),
+    next_player(Gamemode, Player, NewPlayer),
+    alternate_color(Color, NewColor),
     nl, horizontal_line,
     turn(NewGameState, Gamemode, NewPlayer, NewColor).
 
-
-
+% Runs a move's changes on GameState i.e. places white and black pieces of new Taijitu on game board
+% move(+GameState, +Move,-NewGameState)
 move(GameState, [White|[Black|_]], NewGameState) :- 
   white_piece_move(GameState, White, NewGameState1), 
   black_piece_move(NewGameState1, Black, NewGameState).
@@ -80,33 +108,9 @@ white_piece_move(GameState, [Row | [Col|_]], NewGameState1) :-
 black_piece_move(NewGameState1, [Row | [Col|_]], NewGameState) :-
   replace_(NewGameState1, Row, Col, black, NewGameState).
 
+% ----------------------------------------------------------------
 
-% play_piece(GameState, Row, InputCol, Option, NewGameState1) :-
-%     % get_input_piece(InputRow, InputCol),
-%     % convert_input_row(InputRow, Row),
-
-%     % Row @> 0, Row @< 12,
-%     % InputCol @> 0, InputCol @< 12,
-
-%     % get_black_piece(Row, InputCol, Option, BlackRow, BlackCol),
-
-%     % replace_(GameState, Row, InputCol, white, NewGameState),
-%     % replace_(NewGameState, BlackRow, BlackCol, black, NewGameState1),
-
-%     % replace_(GameState, Row, InputCol, white, NewGameState), <-------
-
-%     write('Played Piece'), nl.
-
-
-% valid_moves(GameState, _Player, Solucoes) :-
-%     findall(NewGameState1, play_piece(), Solucoes)
-
-
-get_black_piece(Row, Col, Option, NewRow, NewCol) :-
-    % show_options, nl,
-    % read(Option),
-    black_move_part(Row, Col, NewRow, NewCol, Option).
-
+% Writes to screen visual representation of the 4 Taijitu orientations
 show_options :-
     write('    (1)                    (2)      '), nl,
     write('  [white, black]  [black, white]    '), nl, nl,
@@ -114,56 +118,83 @@ show_options :-
     write('  [white,                [black,    '), nl,
     write('   black]                 white]    '), nl.
 
-% black on the right
-black_move_part(Row, Col, Row, NewCol, 1) :-
-    write('\nBlack on Right\n'),
-    NewCol is Col + 1.
 
-% black on the left
-black_move_part(Row, Col, Row, NewCol, 2) :-
-    write('\nBlack on Left\n'),
-    NewCol is Col - 1.
+% Returns coordinates of black piece of Taijitu, according to chosen orientation
+% black_move_part(+Row, +Col, +Option, -BlackRow, -BlackCol)
+black_move_part(Row, Col, '1', Row, BlackCol) :- % black on the right
+    %write('\nBlack on Right\n'),
+    BlackCol is Col + 1.
 
-% black on the bottom
-black_move_part(Row, Col, NewRow, Col, 3) :-
-    write('\nBlack on Bottom\n'),
-    NewRow is Row + 1.
+black_move_part(Row, Col, '2', Row, BlackCol) :- % black on the left
+    %write('\nBlack on Left\n'),
+    BlackCol is Col - 1.
 
-% black on the top
-black_move_part(Row, Col, NewRow, Col, 4) :-
-    write('\nBlack on Top\n'),
-    NewRow is Row - 1.
+black_move_part(Row, Col, '3', BlackRow, Col) :- % black on the bottom
+    %write('\nBlack on Bottom\n'),
+    BlackRow is Row + 1.
 
-
+black_move_part(Row, Col, '4', BlackRow, Col) :- % black on the top
+    %write('\nBlack on Top\n'),
+    BlackRow is Row - 1.
 
 % ----------------------------------------------------------------
-replace_( [L|Ls] , 0 , Y , Z , [R|Ls] ) :- % once we find the desired row,
-  replace_column(L,Y,Z,R)                 % - we replace specified column, and we're done.
-  .                                       %
-replace_( [L|Ls] , X , Y , Z , [L|Rs] ) :- % if we haven't found the desired row yet
-  X > 0 ,                                 % - and the row offset is positive,
-  X1 is X-1 ,                             % - we decrement the row offset
-  replace_( Ls , X1 , Y , Z , Rs )         % - and recurse down
-  .                                       %
+% Converts row and col chars to their corresponding indexes
+convert_input_row('a', 1).
+convert_input_row('b', 2).
+convert_input_row('c', 3).
+convert_input_row('d', 4).
+convert_input_row('e', 5).
+convert_input_row('f', 6).
+convert_input_row('g', 7).
+convert_input_row('h', 8).
+convert_input_row('i', 9).
+convert_input_row('j', 10).
+convert_input_row('k', 11).
+convert_input_row('A', 1).
+convert_input_row('B', 2).
+convert_input_row('C', 3).
+convert_input_row('D', 4).
+convert_input_row('E', 5).
+convert_input_row('F', 6).
+convert_input_row('G', 7).
+convert_input_row('H', 8).
+convert_input_row('I', 9).
+convert_input_row('J', 10).
+convert_input_row('K', 11).
 
-replace_column( [COld|Cs] , 0 , Z , [Z|Cs] ) :-
-    compare(=, COld, 'clear')               % <--- checks if clear
-    .                                       % once we find the specified offset, just make the substitution and finish up.
-replace_column( [C|Cs] , Y , Z , [C|Rs] ) :- % otherwise,
-  Y > 0 ,                                    % - assuming that the column offset is positive,
-  Y1 is Y-1 ,                                % - we decrement it
-  replace_column( Cs , Y1 , Z , Rs )         % - and recurse down.
-  .
+convert_input_col('0', 1).
+convert_input_col('1', 2).
+convert_input_col('2', 3).
+convert_input_col('3', 4).
+convert_input_col('4', 5).
+convert_input_col('5', 6).
+convert_input_col('6', 7).
+convert_input_col('7', 8).
+convert_input_col('8', 9).
+convert_input_col('9', 10).
+convert_input_col('X', 11).
 % ----------------------------------------------------------------
+% Input
 
-get_input_piece(InputRow, InputCol) :-
-    write('White Piece Row: '), get_char(InputRow), get_char(_), nl,
+% Gets coordinates of white piece of the Taijitu from the user
+% input_position(-InputRow, -InputCol, +L)
+input_position(InputRow, InputCol, L) :-
+    write('White Piece Row ( A - '), LastRowIndex is 64 + L, write_char(LastRowIndex), write('): '), get_char(InputRow), get_char(_), nl,
+    write('White Piece Col ( 0 - '), LastColIndex is 47 + L, write_char(LastColIndex), write('): '), get_char(InputCol), get_char(_), nl.
 
-    % write('White Piece Col: '), get_char(InputCol), get_char(_), nl,
-    write('White Piece Col: '), read(InputCol), get_char(_),
-    nl, nl,
-    % format("User Row: ~p | User Col: ~p", [InputRow, InputCol]), 
-    nl.
+% Checks if inputted row and column are valid values and are inside bounds, returning the values converted to indexes in range [0, 11]
+% validate_position(+InputRow, +InputCol, -ConvertedRow, -ConvertedCol)
+validate_position(InputRow, InputCol, ConvertedRow, ConvertedCol) :-
+    convert_input_row(InputRow, ConvertedRow),
+    convert_input_col(InputCol, ConvertedCol),
+    ConvertedRow @> 0, ConvertedRow @< 12,
+    ConvertedCol @> 0, ConvertedCol @< 12.
+
+% Gets the option of the orientation of the Taijitu from the user
+% input_orientation(-Option)
+input_orientation(Option) :-
+    show_options, nl,
+    get_char(Option).
 
 % ----------------------------------------------------------------
 % Score
