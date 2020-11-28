@@ -20,9 +20,8 @@ board_size_menu(GameState) :-
     write_board_size_menu,                          % Displays the menu
     write_user_insert_input,                        % Displays line where the user will write input
     get_char(Input), get_char(_),                   % Input Handling ("Switch")
-    (   % Input = '1' -> /* write('User wrote 1'), */ nl, nl;
-        % Input = '2' -> /* write('User wrote 2'), */ nl, nl;
-        Input = '3' -> /* write('User wrote 3'), */ initial(GameState), nl;
+    ( 
+        (Input = '1' ; Input = '2' ; Input = '3') -> initial(Input, GameState), nl;
     
     nl, write('Invalid Option'), nl,                % "Else statement"
     enter_to_continue, nl,

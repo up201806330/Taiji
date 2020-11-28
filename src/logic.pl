@@ -1,16 +1,7 @@
 
-% Checks if board is full and game is over.
-% check_ full_ board(Board):-().
-
-
 
 % Checks if both positions to be occupied by a piece fit on the board. If either position fails, informs the user and asks for new input.
 % check_move(Board, X1, Y1, X2, Y2):-().
-
-
-
-% Counts up score of both colors, called when game is over
-% count_score(Board, WhiteScore, BlackScore):-().
 
 
 % Player vs Player Mode
@@ -30,7 +21,10 @@ turn(GameState, Player, Color) :-
     nl,
     % valid_moves(GameState, Player, ListOfMoves).
     game_over(GameState, Winner),
-    nl, nl, write(' TURN '), nl, nl,
+
+    %value(GameState, w, WhiteScore), value(GameState,b, BlackScore),
+    %nl, nl, write('White: '), write(WhiteScore), write(' | Black: '), write(BlackScore), nl, nl,
+
     display_game(GameState, Player, Color),
     
     get_input_piece(InputRow, InputCol),

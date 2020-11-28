@@ -34,24 +34,47 @@ write_char(75) :- write('K ').
 
 % ---------------------------------------------------------------
 
-% base case of a line of the board
-write_line([]).
 
-% writes each character of the list (line)
-write_line([Head|Tail]) :-
+% writes each character of the list (line). If id is 0, its either the column index line, or its a normal line past the column index. 
+% Otherwise, its the Id'th element of the row indexing
+% write_line(+Line, +Id) :-
+write_line([], _).
+write_line([Head|Tail], 0) :-
     write_char(Head),
     write('| '),
-    write_line(Tail).
-
-% base case of the board
-write_board([]).
-
-% writes each line of the board by calling the write_line function multiple times
-write_board([Head|Tail]) :-
+    write_line(Tail, 0).
+write_line(Line, Id) :-
+    LetterId is Id + 64,
+    write_char(LetterId),
     write('| '),
-    write_line(Head), nl,
-    write_board(Tail).
+    write_line(Line, 0).
 
+% writes each line of the board by calling the write_line function multiple times; If its the first line, writes the index of columns
+% write_board(+Board, +IsFirstLine)
+write_board(Board) :-
+    write_board(Board, 0).
+
+write_board([], _).
+write_board(Board, 0) :-
+    write('| '),
+    length(Board, Length), get_indexes_line(Length + 1, Indexes),
+    write_line(Indexes, 0), nl,
+    write_board(Board, 1).
+write_board([Head|Tail], CurrLine) :-
+    write('| '),
+    write_line(Head, CurrLine), nl,
+    write_board(Tail, CurrLine + 1).
+
+get_indexes_line(N, L):-
+    N > 0, N =< 12,
+    trim([clear,49,50,51,52,53,54,55,56,57,58,59], N, L).
+
+% Trim List L to length N
+trim(L,N,S) :-
+    length(L,X),
+    PL is X - N,
+    length(P,PL), 
+    append(S,P,L).
 % ---------------------------------------------------------------
 
 % Displays the menu where the user chooses the size of the board
@@ -87,10 +110,10 @@ write_orientation :-
 % ---------------------------------------------------------------
 
 % predicate that returns the inital board state
-initial(GameState) :-
+initial(N, GameState) :-
     % nl, write('Initial State Board'),
     nl,
-    initial_board(GameState).
+    initial_board(N, GameState).
 
 % predicate that returns the intermediate board state
 intermediate(GameState) :-
