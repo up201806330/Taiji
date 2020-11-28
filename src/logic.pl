@@ -1,14 +1,15 @@
-
-
 % Checks if both positions to be occupied by a piece fit on the board. If either position fails, informs the user and asks for new input.
 % check_move(Board, X1, Y1, X2, Y2):-().
 
+% Determining at random whether the first or second playing entities get to be white
+% (PVP: 0 is Player1, 1 is Player2 ; PVE: 0 is Player, 1 is Computer ; EVE: 0 is Computer1, 1 is Computer2)
+random_white_number(White) :-
+    random(0, 2, White).
 
-% Player vs Player Mode
-player_vs_player(GameState) :-
-    random_white_number(White),
-    turn(GameState, White, 0).
-
+% Chooses random entity to be white color and starts game on selected gamemode (PVP, PVE, EVE)
+selectGamemodeAndStart(GameState, Gamemode) :-
+    random_white_number(WhiteEntity),
+    turn(GameState, Gamemode, WhiteEntity, 0).
 
 alternate_value(Value, NewValue) :-
     NewValue is (Value + 1) mod 2.
@@ -16,16 +17,15 @@ alternate_value(Value, NewValue) :-
 game_over(GameState, Winner) :-
     write('Not Full'), nl.
 
-
-turn(GameState, Player, Color) :-
+turn(GameState, Gamemode, Player, Color) :-
     nl,
     % valid_moves(GameState, Player, ListOfMoves).
     game_over(GameState, Winner),
 
-    %value(GameState, w, WhiteScore), value(GameState,b, BlackScore),
-    %nl, nl, write('White: '), write(WhiteScore), write(' | Black: '), write(BlackScore), nl, nl,
+    value(GameState, w, WhiteScore), value(GameState,b, BlackScore),
+    nl, nl, write('White: '), write(WhiteScore), write(' | Black: '), write(BlackScore), nl, nl,
 
-    display_game(GameState, Player, Color),
+    display_game(GameState, Gamemode, Player, Color),
     
     get_input_piece(InputRow, InputCol),
     convert_input_row(InputRow, Row),
@@ -47,7 +47,7 @@ turn(GameState, Player, Color) :-
             % alternate_value(Player, NewPlayer),
             % alternate_value(Color, NewColor),
             % nl, horizontal_line,
-            % turn(NewGameState, NewPlayer, NewColor)
+            % turn(NewGameState, Gamemode, NewPlayer, NewColor)
             ;
             nl, write('Invalid Option'), nl,                % "Else statement"
             enter_to_continue, nl,
@@ -59,14 +59,14 @@ turn(GameState, Player, Color) :-
     % alternate_value(Player, NewPlayer),
     % alternate_value(Color, NewColor),
     % nl, horizontal_line,
-    % turn(NewGameState, NewPlayer, NewColor).
+    % turn(NewGameState, Gamemode, NewPlayer, NewColor).
 
 success_play(Player, NewPlayer, Color, NewColor, NewGameState) :-
     enter_to_continue,
     alternate_value(Player, NewPlayer),
     alternate_value(Color, NewColor),
     nl, horizontal_line,
-    turn(NewGameState, NewPlayer, NewColor).
+    turn(NewGameState, Gamemode, NewPlayer, NewColor).
 
 
 
@@ -166,34 +166,6 @@ get_input_piece(InputRow, InputCol) :-
     nl.
 
 % ----------------------------------------------------------------
-convert_input_row('A', 1).
-convert_input_row('B', 2).
-convert_input_row('C', 3).
-convert_input_row('D', 4).
-convert_input_row('E', 5).
-convert_input_row('F', 6).
-convert_input_row('G', 7).
-convert_input_row('H', 8).
-convert_input_row('I', 9).
-convert_input_row('J', 10).
-convert_input_row('K', 11).
-
-convert_input_col('1', 1).
-convert_input_col('2', 2).
-convert_input_col('3', 3).
-convert_input_col('4', 4).
-convert_input_col('5', 5).
-convert_input_col('6', 6).
-convert_input_col('7', 7).
-convert_input_col('8', 8).
-convert_input_col('9', 9).
-convert_input_col('10', 10).
-convert_input_col('11', 11).
-% ----------------------------------------------------------------
-
-
-
-% ----------------------------------------------------------------
 % Score
 
 % Gets element at (I, J) coordinates of a matrix
@@ -277,7 +249,7 @@ indexes_from_length(L,Output):-
     fail).
 
 value(GameState, Color, Value):-
-    L is length(GameState),
+    length(GameState, L),
     indexes_from_length(L, ToVisit),
     algorithm(GameState, Color, ToVisit, 0, [], Value).
 

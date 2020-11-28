@@ -1,12 +1,9 @@
-% Custom write for each of the possibilities:
-
-% Game Symbols
+% Writes game symbol stored in GameState on screen
 write_char(clear) :- write('  ').
 write_char(white) :- write('w ').
 write_char(black) :- write('b ').
 
 % Top Number Row (Numbers correspond to the correspondent ASCII decimal value)
-% write_char(48) :- write('0 ').
 write_char(49) :- write('1 ').
 write_char(50) :- write('2 ').
 write_char(51) :- write('3 ').
@@ -34,7 +31,6 @@ write_char(75) :- write('K ').
 
 % ---------------------------------------------------------------
 
-
 % writes each character of the list (line). If id is 0, its either the column index line, or its a normal line past the column index. 
 % Otherwise, its the Id'th element of the row indexing
 % write_line(+Line, +Id) :-
@@ -57,7 +53,7 @@ write_board(Board) :-
 write_board([], _).
 write_board(Board, 0) :-
     write('| '),
-    length(Board, Length), get_indexes_line(Length + 1, Indexes),
+    length(Board, Length), get_top_number_row(Length + 1, Indexes),
     write_line(Indexes, 0), nl,
     write_board(Board, 1).
 write_board([Head|Tail], CurrLine) :-
@@ -65,16 +61,11 @@ write_board([Head|Tail], CurrLine) :-
     write_line(Head, CurrLine), nl,
     write_board(Tail, CurrLine + 1).
 
-get_indexes_line(N, L):-
+% Returns top number row with given length
+get_top_number_row(N, L):-
     N > 0, N =< 12,
     trim([clear,49,50,51,52,53,54,55,56,57,58,59], N, L).
 
-% Trim List L to length N
-trim(L,N,S) :-
-    length(L,X),
-    PL is X - N,
-    length(P,PL), 
-    append(S,P,L).
 % ---------------------------------------------------------------
 
 % Displays the menu where the user chooses the size of the board
@@ -97,7 +88,7 @@ write_mode_pvp_ai_menu :-
 
 % ---------------------------------------------------------------
 
-% writes instructions to select orientaion of piece
+% Writes instructions to select orientaion of piece
 write_orientation :-
     nl, write('Piece orientaions:'), nl,
     write('(1)          (2)          (3)          (4)   '), nl,
@@ -125,11 +116,31 @@ end(GameState) :-
     nl, write('End State Board'), nl,
     end_board(GameState).
 
-/*
-(1)          (2)          (3)          (4)
-    |            |            |            |
-    v            v            v            v
--->[W, B]    -->[B, W]    -->[W,       -->[B,
-                              B]           W]
-*/
+% Writes on screen entity assigned to color white, varying from gamemode to gamemode.
+% PVE
+write_white(pve, 0) :- write('The Player (White)').
+write_white(pve, 1) :- write('The Computer (White)').
+write_black(pve, 0) :- write('The Player (Black)').
+write_black(pve, 1) :- write('The Computer (Black)').
+
+% PVP
+write_white(pvp, 0) :- write('Player 1 (White)').
+write_white(pvp, 1) :- write('Player 2 (White)').
+write_black(pvp, 0) :- write('Player 1 (Black)').
+write_black(pvp, 1) :- write('Player 2 (Black)').
+
+% EVE
+write_white(eve, 0) :- write('Computer 1 (White)').
+write_white(eve, 1) :- write('Computer 2 (White)').
+write_black(eve, 0) :- write('Computer 1 (Black)').
+write_black(eve, 1) :- write('Computer 2 (Black)').
+
+% Board Visualization Predicate
+display_game(GameState, Gamemode, Player, 0) :-
+    write_board(GameState), nl,
+    write_white(Gamemode, Player), nl.
+
+display_game(GameState, Gamemode, Player, 1) :-
+    write_board(GameState), nl,
+    write_black(Gamemode, Player), nl.
 
