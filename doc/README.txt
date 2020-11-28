@@ -7,6 +7,12 @@ up201806330@fe.up.pt Rafael Soares Ribeiro
 1st of November, 2020
 
 -----------------------------------------------------------------------------------
+Installation and Execution
+
+In order to run the game, first open SICStus and click on "File", then on "Consult" and select the file "myTaiji.pl". An alternative to this is to use the command consult('[path to myTaiji.pl]'). If using Windows, remember to double the char '\' to '\\' to prevent SICStus from recognizing the backslash as the Escape Character.
+After this loading process, just type 'play.' to get into the game.
+
+-----------------------------------------------------------------------------------
 Game Description
 
 Taiji is a game for 2 players where the goal is to get the highest score. 
