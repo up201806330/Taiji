@@ -224,6 +224,55 @@ play :-
 
 :- use_module(library(lists)).
 
+% Game Symbols
+write_char(clear) :- write('  ').
+write_char(white) :- write('w ').
+write_char(black) :- write('b ').
+
+% Top Number Row (Numbers correspond to the correspondent ASCII decimal value)
+write_char(48) :- write('0 ').
+write_char(49) :- write('1 ').
+write_char(50) :- write('2 ').
+write_char(51) :- write('3 ').
+write_char(52) :- write('4 ').
+write_char(53) :- write('5 ').
+write_char(54) :- write('6 ').
+write_char(55) :- write('7 ').
+write_char(56) :- write('8 ').
+write_char(57) :- write('9 ').
+write_char(58) :- write('10').
+
+% Left Side Letter Column (Numbers correspond to the correspondent ASCII decimal value)
+write_char(65) :- write('A ').
+write_char(66) :- write('B ').
+write_char(67) :- write('C ').
+write_char(68) :- write('D ').
+write_char(69) :- write('E ').
+write_char(70) :- write('F ').
+write_char(71) :- write('G ').
+write_char(72) :- write('H ').
+write_char(73) :- write('I ').
+write_char(74) :- write('J ').
+write_char(75) :- write('K ').
+
+% base case of a line of the board
+write_line([]).
+
+% writes each character of the list (line)
+write_line([Head|Tail]) :-
+    write_char(Head),
+    write('| '),
+    write_line(Tail).
+
+% base case of the board
+write_board([]).
+
+% writes each line of the board by calling the write_line function multiple times
+write_board([Head|Tail]) :-
+    write('| '),
+    write_line(Head), nl,
+    write_board(Tail).
+
 board([
 [clear,b,clear],
 [clear,clear,a],
@@ -244,10 +293,11 @@ s :-
 
 % ANTONIO ----------------
 valid_moves(GameState, Player, ListOfMoves) :-
+    write_board(GameState), nl, nl,
     nth0(0, GameState, Row),
     length(Row, NumCols),
     length(GameState,NumRows),
-    iterateMatrix(GameState, NumRows, NumCols, Player, ListOfMoves), nl, nl, nl,
+    iterateMatrix(GameState, NumRows, NumCols, Player, ListOfMoves), nl, nl, nl, nl,
     write(ListOfMoves).
 
 % Function that iterates over a Matrix and returns the list of Moves
@@ -257,6 +307,7 @@ iterateMatrix(GameState, NumRows, NumCols, Player, PieceAndMoves):-
 iterateMatrix(_, [], NumRows, NumRows, 0, _, _,PieceAndMoves,PieceAndMoves).
 iterateMatrix(GameState, [R|Rs], NumRow, NumRows, 0, NumCols,Player,IntermedPiece,PieceAndMoves) :-
   findPiece(GameState, R, NumRow, 0, NumRows, NumCols, Player,FoundMovesPieces),
+  write(FoundMovesPieces), nl,
   append(IntermedPiece, FoundMovesPieces, NewPieceList),
   X is NumRow+1,
   iterateMatrix(GameState, Rs, X, NumRows, 0, NumCols, Player,NewPieceList,PieceAndMoves).
@@ -272,6 +323,7 @@ findPiece(GameState, [Head|Tail], NumRow, NumCol, NumRows, NumCols,Player,ValidP
     compare(=, Head, 'clear'),
     format("Row: ~p | Col: ~p | Head: ~p ", [NumRow, NumCol, Head]),
     checkNeighbours(GameState, NumRow, NumCol, NumRows, NumCols, CellPiecesAndMoves),
+    nl, write('HI: '), write(CellPiecesAndMoves), nl, % <--- check for length 2
     append(ValidPieceAndMove, [CellPiecesAndMoves], NewPieceList),
     X is NumCol+1,
     findPiece(GameState, Tail, NumRow, X, NumRows, NumCols,Player,NewPieceList,FoundMovesPieces)
@@ -310,8 +362,10 @@ checkDown(GameState,NumRow,NumCol, NumRows, MoveDown, InitialRow, InitialCol):-
 
   (
     (
-      Content \= clear,
+      % Content \= clear,
+      compare(=, Content, 'clear'), write(' was clear? '),
       (
+        write(' move '), 
         Move = [[NumCol, NR]],
         append([], Move, MoveDown)
       )
@@ -322,6 +376,40 @@ checkDown(GameState,NumRow,NumCol, NumRows, MoveDown, InitialRow, InitialCol):-
 
 checkDown(_,_,_,_, [], _, _).
 
-% DOSSENA ----------------
-% valid_moves(GameState, Player, ListOfMoves) :-
-%   findall([] , validMove(GameState, Player,), ListOfMoves).
+
+testing :-
+  initial_board(GameState),
+  % write_board(GameState),
+  move(GameState, [[2, 1], [3, 1]], NewGameState),
+  write('before\n'),
+  write_board(NewGameState).
+
+
+move(GameState, [White|[Black|_]], NewGameState) :- 
+  white_piece_move(GameState, White, NewGameState1), 
+  black_piece_move(NewGameState1, Black, NewGameState).
+
+white_piece_move(GameState, [Row | [Col|_]], NewGameState1) :-
+  replace_(GameState, Row, Col, white, NewGameState1).
+
+black_piece_move(NewGameState1, [Row | [Col|_]], NewGameState) :-
+  replace_(NewGameState1, Row, Col, black, NewGameState).
+
+
+replace_( [L|Ls] , 0 , Y , Z , [R|Ls] ) :- % once we find the desired row,
+  replace_column(L,Y,Z,R)                 % - we replace specified column, and we're done.
+  .                                       %
+replace_( [L|Ls] , X , Y , Z , [L|Rs] ) :- % if we haven't found the desired row yet
+  X > 0 ,                                 % - and the row offset is positive,
+  X1 is X-1 ,                             % - we decrement the row offset
+  replace_( Ls , X1 , Y , Z , Rs )         % - and recurse down
+  .                                       %
+
+replace_column( [COld|Cs] , 0 , Z , [Z|Cs] ) :-
+    compare(=, COld, 'clear')               % <--- checks if clear
+    .                                       % once we find the specified offset, just make the substitution and finish up.
+replace_column( [C|Cs] , Y , Z , [C|Rs] ) :- % otherwise,
+  Y > 0 ,                                    % - assuming that the column offset is positive,
+  Y1 is Y-1 ,                                % - we decrement it
+  replace_column( Cs , Y1 , Z , Rs )         % - and recurse down.
+  .
