@@ -36,9 +36,9 @@ mode_pvp_ai_menu(GameState) :-
     write_mode_pvp_ai_menu,                         % Displays the menu
     write_user_insert_input,                        % Displays line where the user will write input
     get_char(Input), get_char(_),                   % Input Handling ("Switch")
-    (   Input = '1' -> selectGamemodeAndStart(GameState, pvp);
-        Input = '2' -> selectGamemodeAndStart(GameState, pve);
-        Input = '3' -> selectGamemodeAndStart(GameState, eve);
+    (   Input = '1' -> selectGamemodeAndStart(GameState, pvp, 0);
+        Input = '2' -> choose_ai_difficulty_menu(GameState, pve);
+        Input = '3' -> choose_ai_difficulty_menu(GameState, eve);
     
     nl, write('Invalid Option'), nl,                % "Else statement"
     enter_to_continue, nl,
@@ -46,6 +46,17 @@ mode_pvp_ai_menu(GameState) :-
     ).
 
 
+choose_ai_difficulty_menu(GameState, Mode) :-
+    write_difficulty_ai_menu,
+    write_user_insert_input,
+    get_char(Input), get_char(_),                   % Input Handling ("Switch")
+    (   Input = '1' -> selectGamemodeAndStart(GameState, Mode, 1);
+        Input = '2' -> selectGamemodeAndStart(GameState, Mode, 2);
+    
+    nl, write('Invalid Option'), nl,                % "Else statement"
+    enter_to_continue, nl,
+    clear_terminal, choose_ai_difficulty_menu(GameState, Mode)
+    ).
 
 
 

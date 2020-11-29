@@ -88,6 +88,16 @@ write_mode_pvp_ai_menu :-
 
 % ---------------------------------------------------------------
 
+% Displays the menu where the user chooses the difficulty of the AI
+write_difficulty_ai_menu :-
+    horizontal_line, nl,
+    write(  '       Choose the AI\'s difficulty    '), nl, nl,
+    write(  '          1.  Random                  '), nl,
+    write(  '          2.  Greedy                  '), nl,
+    horizontal_line, nl.
+
+% ---------------------------------------------------------------
+
 % Writes to screen visual representation of the 4 Taijitu orientations
 show_orientations :-
     write('    (1)                    (2)      '), nl,

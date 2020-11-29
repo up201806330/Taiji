@@ -15,7 +15,8 @@ random_white_number(eve, White) :-
 
 % Chooses random entity to be white color and starts game on selected gamemode (PVP, PVE, EVE)
 % selectGamemodeAndStart(+GameState, +Gamemode)
-selectGamemodeAndStart(GameState, Gamemode) :-
+selectGamemodeAndStart(GameState, Gamemode, Level) :-
+    % nl, write('Level: '), write(Level), nl, get_char(Input),
     random_white_number(GameMode, WhiteEntity),
     turn(GameState, Gamemode, WhiteEntity, w).
 
