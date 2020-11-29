@@ -29,8 +29,10 @@ next_player(pve, 1, 0).
 next_player(pvp, 0, 0).
 
 % alternate_color(+Color, -NewColor)
-alternate_color(w, NewColor) :- NewColor is b.
-alternate_color(b, NewColor) :- NewColor is w.
+% alternate_color(w, NewColor) :- NewColor is b.
+% alternate_color(b, NewColor) :- NewColor is w.
+alternate_color(w, b).
+alternate_color(b, w).
 
 % ----------------------------------------------------------------
 
