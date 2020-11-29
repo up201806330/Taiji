@@ -274,9 +274,15 @@ write_board([Head|Tail]) :-
     write_board(Tail).
 
 board([
-[clear,b,clear],
-[clear,clear,a],
-[c,clear,clear]
+[clear,clear,black],
+[clear,clear,white],
+[clear,clear,clear]
+]).
+
+board2([
+[clear,black,black],
+[black,black,white],
+[clear,black,clear]
 ]).
 
 initial_board([
@@ -288,8 +294,9 @@ initial_board([
 
 
 s :-
-  initial_board(GameState),
-  valid_moves(GameState, Player, ListOfMoves).
+  board(GameState),
+  valid_moves(GameState, Player, ListOfMoves), nl, nl,
+  write(ListOfMoves).
 
 % ANTONIO ----------------
 valid_moves(GameState, Player, ListOfMoves) :-
@@ -297,8 +304,7 @@ valid_moves(GameState, Player, ListOfMoves) :-
     nth0(0, GameState, Row),
     length(Row, NumCols),
     length(GameState,NumRows),
-    iterateMatrix(GameState, NumRows, NumCols, Player, ListOfMoves), nl, nl, nl, nl,
-    write(ListOfMoves).
+    iterateMatrix(GameState, NumRows, NumCols, Player, ListOfMoves), nl, nl, nl.
 
 % Function that iterates over a Matrix and returns the list of Moves
 iterateMatrix(GameState, NumRows, NumCols, Player, PieceAndMoves):-
@@ -307,7 +313,7 @@ iterateMatrix(GameState, NumRows, NumCols, Player, PieceAndMoves):-
 iterateMatrix(_, [], NumRows, NumRows, 0, _, _,PieceAndMoves,PieceAndMoves).
 iterateMatrix(GameState, [R|Rs], NumRow, NumRows, 0, NumCols,Player,IntermedPiece,PieceAndMoves) :-
   findPiece(GameState, R, NumRow, 0, NumRows, NumCols, Player,FoundMovesPieces),
-  write(FoundMovesPieces), nl,
+  write('ohh '), write(FoundMovesPieces), nl,
   append(IntermedPiece, FoundMovesPieces, NewPieceList),
   X is NumRow+1,
   iterateMatrix(GameState, Rs, X, NumRows, 0, NumCols, Player,NewPieceList,PieceAndMoves).
@@ -324,7 +330,15 @@ findPiece(GameState, [Head|Tail], NumRow, NumCol, NumRows, NumCols,Player,ValidP
     format("Row: ~p | Col: ~p | Head: ~p ", [NumRow, NumCol, Head]),
     checkNeighbours(GameState, NumRow, NumCol, NumRows, NumCols, CellPiecesAndMoves),
     nl, write('HI: '), write(CellPiecesAndMoves), nl, % <--- check for length 2
-    append(ValidPieceAndMove, [CellPiecesAndMoves], NewPieceList),
+    length(CellPiecesAndMoves, CellPiecesAndMovesLength),
+    write('CellPiecesAndMovesLength: '), write(CellPiecesAndMovesLength), nl,
+
+  
+    % append(ValidPieceAndMove, [CellPiecesAndMoves], NewPieceList),
+    checkDiffZeroLength(ValidPieceAndMove, [CellPiecesAndMoves], CellPiecesAndMovesLength, NewPieceList),
+
+
+    nl, write('NewPieceList: '), write(NewPieceList), nl,
     X is NumCol+1,
     findPiece(GameState, Tail, NumRow, X, NumRows, NumCols,Player,NewPieceList,FoundMovesPieces)
   ) ;
@@ -335,19 +349,67 @@ findPiece(GameState, [Head|Tail], NumRow, NumCol, NumRows, NumCols,Player,ValidP
     findPiece(GameState, Tail, NumRow, X, NumRows, NumCols,Player,ValidPieceAndMove,FoundMovesPieces)
   ).
 
+checkDiffZeroLength(NumCol,NumRow, List, 0, []).
+checkDiffZeroLength(NumCol,NumRow, List, 1, NewList) :- append([[NumRow, NumCol]], List, NewList).
+
+checkDiffZeroLength(InputList1, InputList2, 0, InputList1).
+checkDiffZeroLength(InputList1, InputList2, _, NewList) :- append(InputList1, InputList2, NewList).
+
 % Checks for a non empty Cell nearby of a Piece
 checkNeighbours(GameState,NumRow,NumCol, NumRows, NumCols,CellPiecesAndMoves) :-
   checkDown(GameState,NumRow,NumCol, NumRows, MoveDown,NumRow,NumCol), % Down
-  % checkUp(GameState,NumRow,NumCol, MoveUp,NumRow,NumCol), % Up
-  % checkRight(GameState,NumRow,NumCol, NumCols, MoveRight,NumRow,NumCol), % Right
-  % checkLeft(GameState,NumRow,NumCol, MoveLeft,NumRow,NumCol), % Left
+  checkUp(GameState,NumRow,NumCol, MoveUp,NumRow,NumCol), % Up
+  checkRight(GameState,NumRow,NumCol, NumCols, MoveRight,NumRow,NumCol), % Right
+  checkLeft(GameState,NumRow,NumCol, MoveLeft,NumRow,NumCol), % Left
+  % write('\nMoveDown '), write(MoveDown), 
+  length(MoveDown, LengthMoveDown), 
+  % write(' LengthMoveDown '), write(LengthMoveDown), nl,
+  checkDiffZeroLength(NumCol,NumRow, MoveDown, LengthMoveDown, CellMovesDown),
+  % append([[NumCol,NumRow]], MoveDown, CellMoves),
+  % write('\nCellMovesDown '), write([CellMovesDown]), nl,
 
-  append([], MoveDown, CellMoves),
-  % append([], MoveDown, L),
+  % append([], [CellMovesDown], L),                   % <--- I'm here --------
+  length(CellMovesDown, LengthCellMovesDown),
+  checkDiffZeroLength([], [CellMovesDown], LengthCellMovesDown, L),        % <--- I'm here --------
+  % write('\nL '), write(L), nl,
+
+  % write('\nMoveUp '), write(MoveUp), 
+  length(MoveUp, LengthMoveUp), 
+  % write(' LengthMoveUp '), write(LengthMoveUp), nl,
+  checkDiffZeroLength(NumCol,NumRow, MoveUp, LengthMoveUp, CellMovesUp),
+  % write('\nCellMovesUp '), write([CellMovesUp]), nl,
+  % checkDiffZeroLength(NumCol,NumRow, MoveDown, LengthMoveUp, CellMoves),
   % append(L, MoveUp, L1),
+  
+  % append(L, [CellMovesUp], CellMoves),                      % <--- I'm here --------
+
+  % checkDiffZeroLength(L, [CellMovesDown], CellMoves),        % <--- I'm here --------
+  length(CellMovesUp, LengthCellMovesUp),
+  checkDiffZeroLength(L, [CellMovesUp], LengthCellMovesUp, L1),
+  % write('\nL1 '), write(CellMoves), nl,
+
+  % Right
+  length(MoveRight, LengthMoveRight), 
+  checkDiffZeroLength(NumCol,NumRow, MoveRight, LengthMoveRight, CellMovesRight),
+
+  length(CellMovesRight, LengthCellMovesRight),
+  checkDiffZeroLength(L1, [CellMovesRight], LengthCellMovesRight, L2),
+
+  % Left
+  length(MoveLeft, LengthMoveLeft), 
+  checkDiffZeroLength(NumCol,NumRow, MoveLeft, LengthMoveLeft, CellMovesLeft),
+
+  length(CellMovesLeft, LengthCellMovesLeft),
+  checkDiffZeroLength(L2, [CellMovesLeft], LengthCellMovesLeft, CellMoves),
+
+
+
+  nl, write('\nCellMoves: '), nl, write(CellMoves), nl, nl,
   % append(L1, MoveRight, L2),
   % append(L2, MoveLeft, CellMoves),
-  append([[NumCol,NumRow]], CellMoves, CellPiecesAndMoves).
+  
+  % append([[NumCol,NumRow]], CellMoves, CellPiecesAndMoves).
+  append([], CellMoves, CellPiecesAndMoves).
 
 
 % Checks Cells under the selected piece
@@ -366,19 +428,90 @@ checkDown(GameState,NumRow,NumCol, NumRows, MoveDown, InitialRow, InitialCol):-
       compare(=, Content, 'clear'), write(' was clear? '),
       (
         write(' move '), 
-        Move = [[NumCol, NR]],
+        Move = [[NR, NumCol]],
         append([], Move, MoveDown)
       )
-    );
-    checkDown(GameState,NR,NumCol, NumRows, MoveDown, InitialRow, InitialCol)
+    )
+    % ;
+    % checkDown(GameState,NR,NumCol, NumRows, MoveDown, InitialRow, InitialCol)
   )
   .
 
 checkDown(_,_,_,_, [], _, _).
 
+checkUp(GameState,NumRow,NumCol, MoveUp, InitialRow, InitialCol):-
+  NumRow \= 0,
+  write('\nInitialRow: '), write(InitialRow), nl,
+  write('\nNumRow: '), write(NumRow), nl,
+  NR is NumRow-1,
+  write('\nNumRow2: '), write(NR), nl,
+  nth0(NR, GameState, BoardRow),
+  nth0(NumCol, BoardRow, Content),
+  write('\nPreIf\n'),
+  % Content=[Head|_],
+  (
+    (
+      % Head\=empty,
+      compare(=, Content, 'clear'), write(' was clear? '),
+      (
+        write('\nmove Up: '),
+        Move = [[NR, NumCol]],
+        write(Move), nl,
+        append([], Move, MoveUp)
+      )
+    )
+    % ;
+    % checkUp(GameState,NR,NumCol, MoveUp, InitialRow, InitialCol)
+    
+  ).
+checkUp(_,_,_, [], _, _).
+
+
+checkRight(GameState,NumRow,NumCol, NumCols, MoveRight, InitialRow, InitialCol):-
+  NumCol \= NumCols - 1,
+  NC is NumCol+1,
+  nth0(NumRow, GameState, BoardRow),
+  nth0(NC, BoardRow, Content),
+  % Content=[Head|_],
+  (
+    (
+      % Head\=empty,
+      compare(=, Content, 'clear'), % write(' was clear? '),
+      (
+        Move = [[NumRow, NC]],
+        append([], Move, MoveRight)
+      )
+    )
+    % ;
+    % checkRight(GameState,NumRow,NC, NumCols, MoveRight, InitialRow, InitialCol)
+
+  ).
+checkRight(_,_,_,_, [], _, _).
+
+checkLeft(GameState,NumRow,NumCol, MoveLeft, InitialRow, InitialCol):-
+  NumCol \= 0,
+  NC is NumCol-1,
+  nth0(NumRow, GameState, BoardRow),
+  nth0(NC, BoardRow, Content),
+  % Content=[Head|_],
+  (
+    (
+      % Head\=empty,
+      compare(=, Content, 'clear'), % write(' was clear? '),
+      (
+        Move = [[NumRow, NC]],
+        append([], Move, MoveLeft)
+      )
+    )
+    % ;
+    % checkLeft(GameState,NumRow,NC, MoveLeft, InitialRow, InitialCol)
+    
+  ).
+checkLeft(_,_,_, [], _, _).
+
 
 testing :-
-  initial_board(GameState),
+  board(GameState),
   % write_board(GameState),
   move(GameState, [[2, 1], [3, 1]], NewGameState),
   write('before\n'),
