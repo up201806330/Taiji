@@ -87,6 +87,11 @@ turn(GameState, Gamemode, Player, Color) :-
     .
 turn(_,_,_,_):- write('Error occured ; leaving').
 
+validate_orientation('1').
+validate_orientation('2').
+validate_orientation('3').
+validate_orientation('4').
+
 % Called if Move is valid, continues to next turn with new GameState
 % success_play(+NewGameState, +Gamemode, +Player, +Color, -NewPlayer, -NewColor)
 success_play(NewGameState, Gamemode, Player, Color, NewPlayer, NewColor) :-
