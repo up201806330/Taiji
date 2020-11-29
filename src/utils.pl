@@ -78,3 +78,11 @@ atl(List, [H|T], R) :-
 addToList(A, B, L) :-
     atl(A, B, R),
     append(A, R, L).
+
+
+
+checkDiffZeroLength(NumCol,NumRow, List, 0, []).
+checkDiffZeroLength(NumCol,NumRow, List, 1, NewList) :- append([[NumRow, NumCol]], List, NewList).
+
+checkDiffZeroLength(InputList1, InputList2, 0, InputList1).
+checkDiffZeroLength(InputList1, InputList2, _, NewList) :- append(InputList1, InputList2, NewList).

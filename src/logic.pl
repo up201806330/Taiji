@@ -246,3 +246,151 @@ value(GameState, Color, Value):-
 
 
 % ----------------------------------------------------------------
+
+valid_moves(GameState, Player, ListOfMoves) :-
+    nth0(0, GameState, Row),
+    length(Row, NumCols),
+    length(GameState,NumRows),
+    iterateMatrix(GameState, NumRows, NumCols, Player, ListOfMoves).
+
+% Function that iterates over a Matrix and returns the list of Moves
+iterateMatrix(GameState, NumRows, NumCols, Player, PieceAndMoves):-
+  iterateMatrix(GameState,GameState, 0, NumRows, 0, NumCols, Player,[],PieceAndMoves).
+
+iterateMatrix(_, [], NumRows, NumRows, 0, _, _,PieceAndMoves,PieceAndMoves).
+iterateMatrix(GameState, [R|Rs], NumRow, NumRows, 0, NumCols,Player,IntermedPiece,PieceAndMoves) :-
+  findPiece(GameState, R, NumRow, 0, NumRows, NumCols, Player,FoundMovesPieces),
+  append(IntermedPiece, FoundMovesPieces, NewPieceList),
+  X is NumRow+1,
+  iterateMatrix(GameState, Rs, X, NumRows, 0, NumCols, Player,NewPieceList,PieceAndMoves).
+
+
+% Finds a Piece of a Player
+findPiece(GameState, List, NumRow, NumCol, NumRows, NumCols, Player,FoundMovesPieces):-
+  findPiece(GameState, List, NumRow, NumCol, NumRows, NumCols, Player,[],FoundMovesPieces).
+
+findPiece(_, [], _, NumCols, NumRows, NumCols,_,FoundMovesPieces,FoundMovesPieces).
+findPiece(GameState, [Head|Tail], NumRow, NumCol, NumRows, NumCols,Player,ValidPieceAndMove,FoundMovesPieces):-
+  nl,
+  (
+    compare(=, Head, 'clear'),
+    checkNeighbours(GameState, NumRow, NumCol, NumRows, NumCols, CellPiecesAndMoves),
+    length(CellPiecesAndMoves, CellPiecesAndMovesLength),
+
+    checkDiffZeroLength(ValidPieceAndMove, [CellPiecesAndMoves], CellPiecesAndMovesLength, NewPieceList),
+
+    X is NumCol+1,
+    findPiece(GameState, Tail, NumRow, X, NumRows, NumCols,Player,NewPieceList,FoundMovesPieces)
+  )
+  ;
+  (
+    X is NumCol+1,
+    findPiece(GameState, Tail, NumRow, X, NumRows, NumCols,Player,ValidPieceAndMove,FoundMovesPieces)
+  ).
+
+% Checks for a non empty Cell nearby of a Piece
+checkNeighbours(GameState,NumRow,NumCol, NumRows, NumCols,CellPiecesAndMoves) :-
+  checkDown(GameState,NumRow,NumCol, NumRows, MoveDown,NumRow,NumCol), % Down
+  checkUp(GameState,NumRow,NumCol, MoveUp,NumRow,NumCol), % Up
+  checkRight(GameState,NumRow,NumCol, NumCols, MoveRight,NumRow,NumCol), % Right
+  checkLeft(GameState,NumRow,NumCol, MoveLeft,NumRow,NumCol), % Left
+
+  length(MoveDown, LengthMoveDown), 
+  checkDiffZeroLength(NumCol,NumRow, MoveDown, LengthMoveDown, CellMovesDown),
+
+  length(CellMovesDown, LengthCellMovesDown),
+  checkDiffZeroLength([], [CellMovesDown], LengthCellMovesDown, L),
+
+  length(MoveUp, LengthMoveUp),
+  checkDiffZeroLength(NumCol,NumRow, MoveUp, LengthMoveUp, CellMovesUp),
+
+  
+  length(CellMovesUp, LengthCellMovesUp),
+  checkDiffZeroLength(L, [CellMovesUp], LengthCellMovesUp, L1),
+
+  % Right
+  length(MoveRight, LengthMoveRight), 
+  checkDiffZeroLength(NumCol,NumRow, MoveRight, LengthMoveRight, CellMovesRight),
+
+  length(CellMovesRight, LengthCellMovesRight),
+  checkDiffZeroLength(L1, [CellMovesRight], LengthCellMovesRight, L2),
+
+  % Left
+  length(MoveLeft, LengthMoveLeft), 
+  checkDiffZeroLength(NumCol,NumRow, MoveLeft, LengthMoveLeft, CellMovesLeft),
+
+  length(CellMovesLeft, LengthCellMovesLeft),
+  checkDiffZeroLength(L2, [CellMovesLeft], LengthCellMovesLeft, CellMoves),
+
+  append([], CellMoves, CellPiecesAndMoves).
+
+
+% Checks Cells under the selected piece
+% Doesn't check if the selected Piece is at the bottom Row
+checkDown(GameState,NumRow,NumCol, NumRows, MoveDown, InitialRow, InitialCol):-
+  NumRow \= NumRows - 1,
+  NR is NumRow+1,
+  nth0(NR, GameState, BoardRow),
+  nth0(NumCol, BoardRow, Content),
+  (
+    (
+      compare(=, Content, 'clear'),
+      (
+        write(' move '), 
+        Move = [[NR, NumCol]],
+        append([], Move, MoveDown)
+      )
+    )
+  )
+  .
+
+checkDown(_,_,_,_, [], _, _).
+
+checkUp(GameState,NumRow,NumCol, MoveUp, InitialRow, InitialCol):-
+  NumRow \= 0,
+  NR is NumRow-1,
+  nth0(NR, GameState, BoardRow),
+  nth0(NumCol, BoardRow, Content),
+  (
+    (
+      compare(=, Content, 'clear'),
+      (
+        Move = [[NR, NumCol]],
+        append([], Move, MoveUp)
+      )
+    )
+  ).
+checkUp(_,_,_, [], _, _).
+
+
+checkRight(GameState,NumRow,NumCol, NumCols, MoveRight, InitialRow, InitialCol):-
+  NumCol \= NumCols - 1,
+  NC is NumCol+1,
+  nth0(NumRow, GameState, BoardRow),
+  nth0(NC, BoardRow, Content),
+  (
+    (
+      compare(=, Content, 'clear'),
+      (
+        Move = [[NumRow, NC]],
+        append([], Move, MoveRight)
+      )
+    )
+  ).
+checkRight(_,_,_,_, [], _, _).
+
+checkLeft(GameState,NumRow,NumCol, MoveLeft, InitialRow, InitialCol):-
+  NumCol \= 0,
+  NC is NumCol-1,
+  nth0(NumRow, GameState, BoardRow),
+  nth0(NC, BoardRow, Content),
+  (
+    (
+      compare(=, Content, 'clear'),
+      (
+        Move = [[NumRow, NC]],
+        append([], Move, MoveLeft)
+      )
+    )
+  ).
+checkLeft(_,_,_, [], _, _).
