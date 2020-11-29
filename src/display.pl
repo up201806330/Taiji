@@ -86,6 +86,15 @@ write_mode_pvp_ai_menu :-
     write(  '          3.  AI vs AI (???)          '), nl,
     horizontal_line, nl.
 
+% Displays the end screen with who won and how the board ended up
+% display_game_over(+GameState, +Player)
+display_game_over(GameState, Player):-
+    horizontal_line, nl,
+    write('Game Over'), nl, nl
+    write_winner(Player), nl, nl
+    write_board(GameState), nl,
+    horizontal_line, nl.
+    
 % ---------------------------------------------------------------
 
 % Displays the menu where the user chooses the difficulty of the AI
@@ -111,8 +120,7 @@ show_orientations :-
 
 % predicate that returns the inital board state
 initial(N, GameState) :-
-    % nl, write('Initial State Board'),
-    nl,
+    % nl, write('Initial State Board'), nl,
     initial_board(N, GameState).
 
 % predicate that returns the intermediate board state
@@ -126,20 +134,21 @@ end(GameState) :-
     end_board(GameState).
 
 % Writes on screen entity assigned to color (0 is computer, 1 is Player1, 2 is Player2)
-% PVE
-write_white(0) :- write('The Computer (White)').
-write_white(1) :- write('Player1 (White)').
-write_white(2) :- write('Player2 (White)').
-write_black(0) :- write('The Computer (Black)').
-write_black(1) :- write('Player1 (Black)').
-write_black(2) :- write('Player2 (Black)').
+% write_turn(+Entity, +Color)
+write_turn(0, w) :- write('The Computer (White)').
+write_turn(1, w) :- write('Player1 (White)').
+write_turn(2, w) :- write('Player2 (White)').
+write_turn(0, b) :- write('The Computer (Black)').
+write_turn(1, b) :- write('Player1 (Black)').
+write_turn(2, b) :- write('Player2 (Black)').
+
+write_winner(0) :- write('The Computer Wins!').
+write_winner(1) :- write('Player1 Wins!').
+write_winner(2) :- write('Player2 Wins!').
+write_winner(3) :- write('Its a draw!').
 
 % Board Visualization Predicate
-display_game(GameState, Player, w) :-
+display_game(GameState, Player, Color) :-
     write_board(GameState), nl,
-    write_white(Player), nl.
-
-display_game(GameState, Player, b) :-
-    write_board(GameState), nl,
-    write_black(Player), nl.
+    write_turn(Player, Color), nl.
 

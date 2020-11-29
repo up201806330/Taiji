@@ -27,6 +27,7 @@ next_player(pvp, 2, 1).
 next_player(pve, 0, 1).
 next_player(pve, 1, 0).
 next_player(pvp, 0, 0).
+next_player(eve, 0, 0).
 
 % alternate_color(+Color, -NewColor)
 alternate_color(w, b).
@@ -34,19 +35,43 @@ alternate_color(b, w).
 
 % ----------------------------------------------------------------
 
+% Succeeds if no more plays can be made and returns the color that won, else fails
+% game_over(+GameState, -Winner)
 game_over(GameState, Winner) :-
-    write('Not Full'), nl.
-
-turn(GameState, Gamemode, Player, Color) :-
-    clear_terminal,
-
-    % Check if its game over
-    % game_over(GameState, Winner),
-
     % Get and write scores for black and white pieces
     value(GameState, white, WhiteScore), value(GameState, black, BlackScore),
     nl, nl, write('White: '), write(WhiteScore), write(' | Black: '), write(BlackScore), nl, nl, 
     !,
+
+    valid_moves(GameState, _, Moves),
+    length(Moves, Length), !,
+    Length =:= 0,
+    (
+      WhiteScore > BlackScore ->  Winner = w; % White won
+      WhiteScore < BlackScore ->  Winner = b; % Black won 
+                                  Winner = d  % Draw 
+    ).
+
+% Based on the final turn's player and color, returns correct winning player, unless its a draw, where it returns 3
+% winning_player_from_color(+Gamemode, +CurrentPlayer, +CurrentColor, +WinningColor, -WinningPlayer)
+winning_player_from_color(_, _, _, d, WinningPlayer):-
+  WinningPlayer is 3.
+winning_player_from_color(_, CurrentPlayer, WinningColor, WinningColor, WinningPlayer):-
+  WinningPlayer is CurrentPlayer.
+winning_player_from_color(Gamemode, CurrentPlayer, CurrentColor, WinningColor, WinningPlayer):-
+  next_player(Gamemode, CurrentPlayer, WinningPlayer).
+
+turn(GameState, Gamemode, Player, Color) :-
+    clear_terminal,
+    
+    % Check if its game over, in which case it shows appropriate screen ; else continues with game
+    (
+      game_over(GameState, WinningColor) ->  
+        winning_player_from_color(Gamemode, Player, Color, WinningColor, WinningPlayer), 
+        display_game_over(GameState, WinningPlayer),
+        restart_menu
+        ; true
+    ),
 
     % Display board and who is playing currently
     display_game(GameState, Player, Color),
@@ -271,13 +296,12 @@ findPiece(GameState, List, NumRow, NumCol, NumRows, NumCols, Player,FoundMovesPi
 
 findPiece(_, [], _, NumCols, NumRows, NumCols,_,FoundMovesPieces,FoundMovesPieces).
 findPiece(GameState, [Head|Tail], NumRow, NumCol, NumRows, NumCols,Player,ValidPieceAndMove,FoundMovesPieces):-
-  nl,
   (
     compare(=, Head, 'clear'),
     checkNeighbours(GameState, NumRow, NumCol, NumRows, NumCols, CellPiecesAndMoves),
     length(CellPiecesAndMoves, CellPiecesAndMovesLength),
 
-    checkDiffZeroLength(ValidPieceAndMove, [CellPiecesAndMoves], CellPiecesAndMovesLength, NewPieceList),
+    checkDiffZeroLength(ValidPieceAndMove, CellPiecesAndMoves, CellPiecesAndMovesLength, NewPieceList),
 
     X is NumCol+1,
     findPiece(GameState, Tail, NumRow, X, NumRows, NumCols,Player,NewPieceList,FoundMovesPieces)
@@ -336,7 +360,6 @@ checkDown(GameState,NumRow,NumCol, NumRows, MoveDown, InitialRow, InitialCol):-
     (
       compare(=, Content, 'clear'),
       (
-        write(' move '), 
         Move = [[NR, NumCol]],
         append([], Move, MoveDown)
       )

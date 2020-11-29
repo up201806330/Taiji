@@ -58,8 +58,10 @@ choose_ai_difficulty_menu(GameState, Mode) :-
     clear_terminal, choose_ai_difficulty_menu(GameState, Mode)
     ).
 
-
-
+restart_menu :-
+    write('Go to Main Menu?'), nl,
+    enter_to_continue, nl,
+    clear_terminal, play.
 
     
     
