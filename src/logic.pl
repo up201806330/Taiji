@@ -42,7 +42,8 @@ game_over(GameState, Winner) :-
     value(GameState, white, WhiteScore), value(GameState, black, BlackScore),
     nl, nl, write('White: '), write(WhiteScore), write(' | Black: '), write(BlackScore), nl, nl, 
     !,
-
+  
+    % Get valid moves list
     valid_moves(GameState, _, Moves),
     length(Moves, Length), !,
     Length =:= 0,
@@ -58,7 +59,7 @@ winning_player_from_color(_, _, _, d, WinningPlayer):-
   WinningPlayer is 3.
 winning_player_from_color(_, CurrentPlayer, WinningColor, WinningColor, WinningPlayer):-
   WinningPlayer is CurrentPlayer.
-winning_player_from_color(Gamemode, CurrentPlayer, CurrentColor, WinningColor, WinningPlayer):-
+winning_player_from_color(Gamemode, CurrentPlayer, _, _ , WinningPlayer):-
   next_player(Gamemode, CurrentPlayer, WinningPlayer).
 
 turn(GameState, Gamemode, Player, Color) :-
@@ -76,25 +77,33 @@ turn(GameState, Gamemode, Player, Color) :-
     % Display board and who is playing currently
     display_game(GameState, Player, Color),
     
-    % Get input from player to choose position of white piece of Taijitu
-    length(GameState, L),
-    input_position(InputRow, InputCol, L),
     (
-        validate_position(InputRow, InputCol, L, ValidatedRow, ValidatedCol) -> true;
+      (Player =:= 1 ; Player =:= 2) ->
+      (
+        % Get input from player to choose position of white piece of Taijitu
+        length(GameState, L),
+        input_position(InputRow, InputCol, L),
+        (
+            validate_position(InputRow, InputCol, L, ValidatedRow, ValidatedCol) -> true;
 
-        nl, write('Invalid Taijitu position!'), nl,                % "Else statement"
-        enter_to_continue, nl,
-        turn(GameState, Gamemode, Player, Color)
-    ),
+            nl, write('Invalid Taijitu position!'), nl,                % "Else statement"
+            enter_to_continue, nl,
+            turn(GameState, Gamemode, Player, Color)
+        ),
 
-    % Get input from player to choose orientation of the taijitu
-    input_orientation(Option),
-    (
-        validate_orientation(Option) -> true;
+        % Get input from player to choose orientation of the taijitu
+        input_orientation(Option),
+        (
+            validate_orientation(Option) -> true;
 
-        nl, write('Invalid Taijitu orientation!'), nl,                % "Else statement"
-        enter_to_continue, nl,
-        turn(GameState, Gamemode, Player, Color)
+            nl, write('Invalid Taijitu orientation!'), nl,                % "Else statement"
+            enter_to_continue, nl,
+            turn(GameState, Gamemode, Player, Color)
+        )
+      );
+      (
+        write('Get Fucked')
+      )
     ),
     
     % Get coords of black piece of Taijitu, according to chosen orientation
@@ -103,7 +112,7 @@ turn(GameState, Gamemode, Player, Color) :-
     Move = [[ValidatedRow, ValidatedCol],[BlackRow, BlackCol]],
     % play_piece(GameState, NewGameState),
     (
-        move(GameState, Move, NewGameState) -> success_play(NewGameState, Gamemode, Player, Color, NewPlayer, NewColor);
+        move(GameState, Move, NewGameState) -> success_play(NewGameState, Gamemode, Player, Color);
         
         nl, write('Cant place piece there!'), nl,                % "Else statement"
         enter_to_continue, nl,
@@ -113,8 +122,8 @@ turn(GameState, Gamemode, Player, Color) :-
 turn(_,_,_,_):- write('Error occured ; leaving').
 
 % Called if Move is valid, continues to next turn with new GameState
-% success_play(+NewGameState, +Gamemode, +Player, +Color, -NewPlayer, -NewColor)
-success_play(NewGameState, Gamemode, Player, Color, NewPlayer, NewColor) :-
+% success_play(+NewGameState, +Gamemode, +Player, +Color)
+success_play(NewGameState, Gamemode, Player, Color) :-
     nl, write('Success'), nl,
     enter_to_continue,
     next_player(Gamemode, Player, NewPlayer),
@@ -294,7 +303,7 @@ iterateMatrix(GameState, [R|Rs], NumRow, NumRows, 0, NumCols,Player,IntermedPiec
 findPiece(GameState, List, NumRow, NumCol, NumRows, NumCols, Player,FoundMovesPieces):-
   findPiece(GameState, List, NumRow, NumCol, NumRows, NumCols, Player,[],FoundMovesPieces).
 
-findPiece(_, [], _, NumCols, NumRows, NumCols,_,FoundMovesPieces,FoundMovesPieces).
+findPiece(_, [], _, NumCols, _, NumCols, _, FoundMovesPieces, FoundMovesPieces).
 findPiece(GameState, [Head|Tail], NumRow, NumCol, NumRows, NumCols,Player,ValidPieceAndMove,FoundMovesPieces):-
   (
     compare(=, Head, 'clear'),
@@ -314,10 +323,10 @@ findPiece(GameState, [Head|Tail], NumRow, NumCol, NumRows, NumCols,Player,ValidP
 
 % Checks for a non empty Cell nearby of a Piece
 checkNeighbours(GameState,NumRow,NumCol, NumRows, NumCols,CellPiecesAndMoves) :-
-  checkDown(GameState,NumRow,NumCol, NumRows, MoveDown,NumRow,NumCol), % Down
-  checkUp(GameState,NumRow,NumCol, MoveUp,NumRow,NumCol), % Up
-  checkRight(GameState,NumRow,NumCol, NumCols, MoveRight,NumRow,NumCol), % Right
-  checkLeft(GameState,NumRow,NumCol, MoveLeft,NumRow,NumCol), % Left
+  checkDown(GameState,NumRow,NumCol, NumRows, MoveDown), % Down
+  checkUp(GameState,NumRow,NumCol, MoveUp), % Up
+  checkRight(GameState,NumRow,NumCol, NumCols, MoveRight), % Right
+  checkLeft(GameState,NumRow,NumCol, MoveLeft), % Left
 
   length(MoveDown, LengthMoveDown), 
   checkDiffZeroLength(NumCol,NumRow, MoveDown, LengthMoveDown, CellMovesDown),
@@ -351,7 +360,7 @@ checkNeighbours(GameState,NumRow,NumCol, NumRows, NumCols,CellPiecesAndMoves) :-
 
 % Checks Cells under the selected piece
 % Doesn't check if the selected Piece is at the bottom Row
-checkDown(GameState,NumRow,NumCol, NumRows, MoveDown, InitialRow, InitialCol):-
+checkDown(GameState,NumRow, NumCol, NumRows, MoveDown):-
   NumRow \= NumRows - 1,
   NR is NumRow+1,
   nth0(NR, GameState, BoardRow),
@@ -367,9 +376,9 @@ checkDown(GameState,NumRow,NumCol, NumRows, MoveDown, InitialRow, InitialCol):-
   )
   .
 
-checkDown(_,_,_,_, [], _, _).
+checkDown(_, _, _, _, []).
 
-checkUp(GameState,NumRow,NumCol, MoveUp, InitialRow, InitialCol):-
+checkUp(GameState, NumRow, NumCol, MoveUp):-
   NumRow \= 0,
   NR is NumRow-1,
   nth0(NR, GameState, BoardRow),
@@ -383,10 +392,10 @@ checkUp(GameState,NumRow,NumCol, MoveUp, InitialRow, InitialCol):-
       )
     )
   ).
-checkUp(_,_,_, [], _, _).
+checkUp(_, _, _, []).
 
 
-checkRight(GameState,NumRow,NumCol, NumCols, MoveRight, InitialRow, InitialCol):-
+checkRight(GameState, NumRow, NumCol, NumCols, MoveRight):-
   NumCol \= NumCols - 1,
   NC is NumCol+1,
   nth0(NumRow, GameState, BoardRow),
@@ -400,9 +409,9 @@ checkRight(GameState,NumRow,NumCol, NumCols, MoveRight, InitialRow, InitialCol):
       )
     )
   ).
-checkRight(_,_,_,_, [], _, _).
+checkRight(_, _, _, _, []).
 
-checkLeft(GameState,NumRow,NumCol, MoveLeft, InitialRow, InitialCol):-
+checkLeft(GameState, NumRow, NumCol, MoveLeft):-
   NumCol \= 0,
   NC is NumCol-1,
   nth0(NumRow, GameState, BoardRow),
@@ -416,4 +425,4 @@ checkLeft(GameState,NumRow,NumCol, MoveLeft, InitialRow, InitialCol):-
       )
     )
   ).
-checkLeft(_,_,_, [], _, _).
+checkLeft(_, _, _, []).

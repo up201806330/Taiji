@@ -90,8 +90,8 @@ write_mode_pvp_ai_menu :-
 % display_game_over(+GameState, +Player)
 display_game_over(GameState, Player):-
     horizontal_line, nl,
-    write('Game Over'), nl, nl
-    write_winner(Player), nl, nl
+    write('Game Over'), nl, nl,
+    write_winner(Player), nl, nl,
     write_board(GameState), nl,
     horizontal_line, nl.
     
