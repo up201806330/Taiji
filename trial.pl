@@ -335,7 +335,7 @@ findPiece(GameState, [Head|Tail], NumRow, NumCol, NumRows, NumCols,Player,ValidP
 
   
     % append(ValidPieceAndMove, [CellPiecesAndMoves], NewPieceList),
-    checkDiffZeroLength(ValidPieceAndMove, [CellPiecesAndMoves], CellPiecesAndMovesLength, NewPieceList),
+    checkDiffZeroLength(ValidPieceAndMove, CellPiecesAndMoves, CellPiecesAndMovesLength, NewPieceList),
 
 
     nl, write('NewPieceList: '), write(NewPieceList), nl,
