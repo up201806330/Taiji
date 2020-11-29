@@ -139,7 +139,7 @@ display_game(GameState, Player, w) :-
     write_board(GameState), nl,
     write_white(Player), nl.
 
-display_game(GameState, Player, 1) :-
+display_game(GameState, Player, b) :-
     write_board(GameState), nl,
     write_black(Player), nl.
 
