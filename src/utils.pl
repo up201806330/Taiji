@@ -6,7 +6,7 @@ write_user_insert_input :-
 
 enter_to_continue:-
 	write('Press Enter to continue.'), nl,
-	write_user_insert_input, get_char(_), !.
+	write_user_insert_input, get_char(_), nl, write('Leaving'), nl, !.
 
 % Source: https://swi-prolog.discourse.group/t/useful-command-to-clear-the-console/976
 clear_terminal :-
