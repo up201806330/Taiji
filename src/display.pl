@@ -83,7 +83,7 @@ write_mode_pvp_ai_menu :-
     horizontal_line, nl,
     write(  '       Choose your desired mode       '), nl, nl,
     write(  '          1.  Player vs Player        '), nl,
-    write(  '          2.  Player vs AI            '), nl,
+    write(  '          2.  Player vs Computer      '), nl,
     write(  '          3.  Computer vs Computer    '), nl,
     horizontal_line, nl.
 
