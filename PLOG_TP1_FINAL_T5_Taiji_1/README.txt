@@ -16,9 +16,8 @@ After this loading process, just type 'play.' to get into the game.
 Game Description
 
 Taiji is a game for 2 players where the goal is to get the highest score. 
-The score is determined by the (sum of the) size of the groups of horizontally or vertically adjacent (diagonal alignment not included) squares of the players' respective colour (light or dark). To note that in the original game the number of groups was capped at three for an 11x11 board, but in our implementation we decided to consider all groups to reduce the number of games ending with ties.
-
-The game is constituted concretely by pieces and a square board, having three possible dimensions: 7x7, 9x9, 11x11.
+The score is determined by the (sum of the) size of the largest group or groups of horizontally or vertically adjacent (diagonal alignment not included) squares of the players' respective colour (light or dark).
+The game is constituted concretely by pieces and a 11 by 11 board, whose pre-defined occupation rate determines the number of groups to include for the end score: 3 groups for 11x11, 2 for 9x9 and only 1 group for a 7x7 game.
 The 60 pieces of the game are called TAJITUs: 2-square wide rectangular pieces (2x1) with both of the colours, one in one of the halves, the other on the other half.
 
 The game starts by determining randomly the colour of the 2 players, having the first turn the player with the light colour. One at a time, players alternate to place one TAJITU on the board until the game reached a state where there is no space for another TAJITU to be placed, meaning that a player might be helping the other one to win the game because each piece has both colours.

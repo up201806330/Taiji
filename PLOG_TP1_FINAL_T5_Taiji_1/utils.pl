@@ -12,12 +12,23 @@ enter_to_continue:-
 clear_terminal :-
     write('\e[H\e[2J').
 
+% Sums all elements inside List
+list_sum([Item], Item).
+list_sum([Item1,Item2 | Tail], Total) :-
+    NewItem is Item1+Item2,
+    list_sum([NewItem|Tail], Total).
+
+
 % Trim List L to length N
 trim(L,N,S) :-
     length(L,X),
-    PL is X - N,
-    length(P,PL), 
-    append(S,P,L).
+    (
+        N =< X ->
+        PL is X - N,
+        length(P,PL), 
+        append(S,P,L);
+        append([], L, S)
+    ).
 
 replace_( [L|Ls] , 0 , Y , Z , [R|Ls] ) :-      % once we find the desired row,
   replace_column(L,Y,Z,R)                       % - we replace specified column, and we're done.
