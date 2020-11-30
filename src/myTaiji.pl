@@ -11,7 +11,8 @@ play :-
     % , nl, 
     % random_white_number(White),
     % turn(GameState, White).
-    
+play :-
+    write('\nExiting').    
 
 % HOW TO "TEST"
 % - Consult myTaiji.pl

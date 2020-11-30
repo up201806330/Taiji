@@ -75,15 +75,16 @@ write_board_size_menu :-
     write(  '               1.  7  x  7                 '), nl,
     write(  '               2.  9  x  9                 '), nl,
     write(  '               3.  11 x 11                 '), nl,
+    write(  '               4.  Exit                    '), nl,
     horizontal_line, nl.
 
 % Displays the menu where the user chooses the "mode" to play
 write_mode_pvp_ai_menu :-
     horizontal_line, nl,
-    write(  '       Choose your desired mode      '), nl, nl,
+    write(  '       Choose your desired mode       '), nl, nl,
     write(  '          1.  Player vs Player        '), nl,
     write(  '          2.  Player vs AI            '), nl,
-    write(  '          3.  AI vs AI (???)          '), nl,
+    write(  '          3.  Computer vs Computer    '), nl,
     horizontal_line, nl.
 
 % Displays the end screen with who won and how the board ended up
@@ -146,7 +147,6 @@ write_turn(2, black) :- write('Player2 (Black)').
 write_winner(0) :- write('The Computer Wins!').
 write_winner(1) :- write('Player1 Wins!').
 write_winner(2) :- write('Player2 Wins!').
-write_winner(3) :- write('Its a draw!').
 
 % Board Visualization Predicate
 display_game(GameState, Player, Color) :-

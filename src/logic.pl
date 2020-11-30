@@ -48,9 +48,8 @@ game_over(GameState, Winner) :-
     length(Moves, Length), !,
     Length =:= 0,
     (
-      WhiteScore > BlackScore ->  Winner = w; % White won
-      WhiteScore < BlackScore ->  Winner = b; % Black won 
-                                  Winner = d  % Draw 
+      WhiteScore > BlackScore  ->  Winner = w; % White won
+      WhiteScore =< BlackScore ->  Winner = b  % Black won
     ).
 
 % Based on the final turn's player and color, returns correct winning player, unless its a draw, where it returns 3
@@ -169,7 +168,7 @@ turn(GameState, Gamemode, Level, Player, Color) :-
         turn(GameState, Gamemode, Level, Player, Color)
     )
     .
-turn(_,_,_,_,_):- write('Error occured ; leaving').
+turn(_,_,_,_,_):- write('\nExiting').
 
 % Called if Move is valid, continues to next turn with new GameState
 % success_play(+NewGameState, +Gamemode, +Level, +Player, +Color)

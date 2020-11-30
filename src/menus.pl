@@ -22,6 +22,7 @@ board_size_menu(GameState) :-
     get_char(Input), get_char(_),                   % Input Handling ("Switch")
     ( 
         (Input = '1' ; Input = '2' ; Input = '3') -> initial(Input, GameState);
+         Input = '4' -> fail ;
     
     nl, write('Invalid Option'), nl,                % "Else statement"
     enter_to_continue, nl,
