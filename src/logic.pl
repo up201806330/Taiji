@@ -1,5 +1,5 @@
-% Checks if both positions to be occupied by a piece fit on the board. If either position fails, informs the user and asks for new input.
-% check_move(Board, X1, Y1, X2, Y2):-().
+% ----------------------------------------------------------------
+% Start of game
 
 % Determining at random whether the first or second playing entities get to be white
 % (0 is Computer, 1 is Player1, 2 is Player2)
@@ -14,11 +14,10 @@ random_white_number(eve, White) :-
     White is 0.
 
 % Chooses random entity to be white color and starts game on selected gamemode (PVP, PVE, EVE)
-% selectGamemodeAndStart(+GameState, +Gamemode)
+% selectGamemodeAndStart(+GameState, +Gamemode, +Level)
 selectGamemodeAndStart(GameState, Gamemode, Level) :-
-    % nl, write('Level: '), write(Level), nl, get_char(Input),
-    random_white_number(GameMode, WhiteEntity),
-    turn(GameState, Gamemode, WhiteEntity, w).
+    random_white_number(Gamemode, WhiteEntity),
+    turn(GameState, Gamemode, Level, WhiteEntity, white).
 
 % Switches to next player, depends on game mode
 % next_player(+Gamemode, +Player, -NextPlayer)
@@ -30,10 +29,11 @@ next_player(pvp, 0, 0).
 next_player(eve, 0, 0).
 
 % alternate_color(+Color, -NewColor)
-alternate_color(w, b).
-alternate_color(b, w).
+alternate_color(white, black).
+alternate_color(black, white).
 
 % ----------------------------------------------------------------
+% End of game 
 
 % Succeeds if no more plays can be made and returns the color that won, else fails
 % game_over(+GameState, -Winner)
@@ -62,7 +62,58 @@ winning_player_from_color(_, CurrentPlayer, WinningColor, WinningColor, WinningP
 winning_player_from_color(Gamemode, CurrentPlayer, _, _ , WinningPlayer):-
   next_player(Gamemode, CurrentPlayer, WinningPlayer).
 
-turn(GameState, Gamemode, Player, Color) :-
+% ----------------------------------------------------------------
+% Turn
+
+% Chooses computer's move, based on difficulty level
+% choose_move(+GameState, +Color, +Level, -Move)
+choose_move(GameState, _, 1, Move):-
+  valid_moves(GameState, _, Moves),
+  length(Moves, L),
+  random(0, L, MoveIndex),
+  nth0(MoveIndex, Moves, Move).
+
+choose_move(GameState, Color, 2, Move):-
+  valid_moves(GameState, _, [MovesHead|MovesTail]),
+  best_move(GameState, [MovesHead|MovesTail], Color, 0, MovesHead, Move).
+  
+choose_move(GameState, Color, 3, Move):-
+  valid_moves(GameState, _, [MovesHead|MovesTail]),
+  best_move(GameState, [MovesHead|MovesTail], Color, 0, 999, MovesHead, Move).
+  
+% Goes through list of moves and returns the one with the largest score for the computer.
+% If it's being used in hardest difficulty, also checks in case of a draw, and returns the first move that minimizes the opponent score
+
+% best_move(+GameState, +Moves, +Color, +MaxThisScore, +CurrBestMove, -BestMove)  <- Medium difficulty (Level 2)
+best_move(_, [], _, _, CurrBestMove, BestMove):-
+  BestMove = CurrBestMove.
+best_move(GameState, [H|T], Color, MaxThisScore, CurrBestMove, BestMove):-
+  move(GameState, H, NewGameState),
+  value(NewGameState, Color, ThisScore),
+  (
+    ThisScore > MaxThisScore -> % Move maximizes computer score
+      best_move(GameState, T, Color, ThisScore, H, BestMove) ; % Continues down valid moves list, saving new best move
+      best_move(GameState, T, Color, MaxThisScore, CurrBestMove, BestMove) % Ignores this move
+  ).
+
+% best_move(+GameState, +Moves, +Color, +MaxThisScore, +MinOpponentScore, +CurrBestMove, -BestMove)  <- Hard difficulty (Level 3)
+best_move(_, [], _, _, _, CurrBestMove, BestMove):-
+  BestMove = CurrBestMove.
+best_move(GameState, [H|T], Color, MaxThisScore, MinOpponentScore, CurrBestMove, BestMove):-
+  move(GameState, H, NewGameState),
+  value(NewGameState, Color, ThisScore),
+  alternate_color(Color, OpponentColor),
+  value(NewGameState, OpponentColor, OpponentScore),
+  (
+    (ThisScore > MaxThisScore ; % Move maximizes computer score
+    (ThisScore =:= MaxThisScore,  OpponentScore < MinOpponentScore)) -> % Tie breaker, chooses move that minimizes opponent score
+      best_move(GameState, T, Color, ThisScore, OpponentScore, H, BestMove) ; % Continues down valid moves list, saving new best move
+      best_move(GameState, T, Color, MaxThisScore, MinOpponentScore, CurrBestMove, BestMove) % Ignores this move
+  ).
+
+% Initiates new turn with given GameState, Gamemode, Player and Color
+% turn(+GameState, +Gamemode, +Level, +Player, +Color) 
+turn(GameState, Gamemode, Level, Player, Color) :-
     clear_terminal,
     
     % Check if its game over, in which case it shows appropriate screen ; else continues with game
@@ -76,10 +127,11 @@ turn(GameState, Gamemode, Player, Color) :-
 
     % Display board and who is playing currently
     display_game(GameState, Player, Color),
-    
+
+    % Decide if input will be given by a player through keyboard or by the computer with choose_move
     (
-      (Player =:= 1 ; Player =:= 2) ->
-      (
+      Player = 0 -> choose_move(GameState, Color, Level, ComputerMove), Move = ComputerMove;
+      ( 
         % Get input from player to choose position of white piece of Taijitu
         length(GameState, L),
         input_position(InputRow, InputCol, L),
@@ -88,7 +140,7 @@ turn(GameState, Gamemode, Player, Color) :-
 
             nl, write('Invalid Taijitu position!'), nl,                % "Else statement"
             enter_to_continue, nl,
-            turn(GameState, Gamemode, Player, Color)
+            turn(GameState, Gamemode, Level, Player, Color)
         ),
 
         % Get input from player to choose orientation of the taijitu
@@ -98,38 +150,36 @@ turn(GameState, Gamemode, Player, Color) :-
 
             nl, write('Invalid Taijitu orientation!'), nl,                % "Else statement"
             enter_to_continue, nl,
-            turn(GameState, Gamemode, Player, Color)
-        )
-      );
-      (
-        write('Get Fucked')
+            turn(GameState, Gamemode, Level, Player, Color)
+        ),
+
+        % Get coords of black piece of Taijitu, according to chosen orientation
+        black_move_part(ValidatedRow, ValidatedCol, Option, BlackRow, BlackCol),
+        
+        Move = [[ValidatedRow, ValidatedCol],[BlackRow, BlackCol]]
       )
     ),
-    
-    % Get coords of black piece of Taijitu, according to chosen orientation
-    black_move_part(ValidatedRow, ValidatedCol, Option, BlackRow, BlackCol),
-    
-    Move = [[ValidatedRow, ValidatedCol],[BlackRow, BlackCol]],
+  
     % play_piece(GameState, NewGameState),
     (
-        move(GameState, Move, NewGameState) -> success_play(NewGameState, Gamemode, Player, Color);
+        move(GameState, Move, NewGameState) -> success_play(NewGameState, Gamemode, Level, Player, Color);
         
         nl, write('Cant place piece there!'), nl,                % "Else statement"
         enter_to_continue, nl,
-        turn(GameState, Gamemode, Player, Color)
+        turn(GameState, Gamemode, Level, Player, Color)
     )
     .
-turn(_,_,_,_):- write('Error occured ; leaving').
+turn(_,_,_,_,_):- write('Error occured ; leaving').
 
 % Called if Move is valid, continues to next turn with new GameState
-% success_play(+NewGameState, +Gamemode, +Player, +Color)
-success_play(NewGameState, Gamemode, Player, Color) :-
+% success_play(+NewGameState, +Gamemode, +Level, +Player, +Color)
+success_play(NewGameState, Gamemode, Level, Player, Color) :-
     nl, write('Success'), nl,
     enter_to_continue,
     next_player(Gamemode, Player, NewPlayer),
     alternate_color(Color, NewColor),
     nl, horizontal_line,
-    turn(NewGameState, Gamemode, NewPlayer, NewColor).
+    turn(NewGameState, Gamemode, Level, NewPlayer, NewColor).
 
 % Runs a move's changes on GameState i.e. places white and black pieces of new Taijitu on game board
 % move(+GameState, +Move,-NewGameState)

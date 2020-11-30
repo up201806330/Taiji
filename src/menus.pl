@@ -52,6 +52,7 @@ choose_ai_difficulty_menu(GameState, Mode) :-
     get_char(Input), get_char(_),                   % Input Handling ("Switch")
     (   Input = '1' -> selectGamemodeAndStart(GameState, Mode, 1);
         Input = '2' -> selectGamemodeAndStart(GameState, Mode, 2);
+        Input = '3' -> selectGamemodeAndStart(GameState, Mode, 3);
     
     nl, write('Invalid Option'), nl,                % "Else statement"
     enter_to_continue, nl,

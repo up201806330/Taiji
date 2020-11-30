@@ -101,8 +101,9 @@ display_game_over(GameState, Player):-
 write_difficulty_ai_menu :-
     horizontal_line, nl,
     write(  '       Choose the AI\'s difficulty    '), nl, nl,
-    write(  '          1.  Random                  '), nl,
-    write(  '          2.  Greedy                  '), nl,
+    write(  '          1.  Easy                    '), nl,
+    write(  '          2.  Medium                  '), nl,
+    write(  '          3.  Hard                    '), nl,
     horizontal_line, nl.
 
 % ---------------------------------------------------------------
@@ -135,12 +136,12 @@ end(GameState) :-
 
 % Writes on screen entity assigned to color (0 is computer, 1 is Player1, 2 is Player2)
 % write_turn(+Entity, +Color)
-write_turn(0, w) :- write('The Computer (White)').
-write_turn(1, w) :- write('Player1 (White)').
-write_turn(2, w) :- write('Player2 (White)').
-write_turn(0, b) :- write('The Computer (Black)').
-write_turn(1, b) :- write('Player1 (Black)').
-write_turn(2, b) :- write('Player2 (Black)').
+write_turn(0, white) :- write('The Computer (White)').
+write_turn(1, white) :- write('Player1 (White)').
+write_turn(2, white) :- write('Player2 (White)').
+write_turn(0, black) :- write('The Computer (Black)').
+write_turn(1, black) :- write('Player1 (Black)').
+write_turn(2, black) :- write('Player2 (Black)').
 
 write_winner(0) :- write('The Computer Wins!').
 write_winner(1) :- write('Player1 Wins!').

@@ -82,5 +82,5 @@ addToList(A, B, L) :-
 checkDiffZeroLength(_, _, _, 0, []).
 checkDiffZeroLength(NumCol,NumRow, List, 1, NewList) :- append([[NumRow, NumCol]], List, NewList).
 
-checkDiffZeroLength(_, _, 0, _).
+checkDiffZeroLength(InputList1, _, 0, InputList1).
 checkDiffZeroLength(InputList1, InputList2, _, NewList) :- append(InputList1, InputList2, NewList).
