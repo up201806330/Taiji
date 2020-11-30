@@ -304,25 +304,13 @@ dfs(GameState, Color, [H|T], VisitedIn, DepthIn, VisitedOut, DepthOut) :-
     NewDepthIn is DepthIn + 1,
     dfs(GameState, Color, ToVisit, [H|VisitedIn], NewDepthIn, VisitedOut, DepthOut).
 
-% algorithm(+GameState, +Color, +ToVisit, +Values, +VisitedIn, -Value)
-algorithm(GameState, _, [], Values, _, Value):-
-    length(GameState, L),
-    get_scoring_type(L, ScoringType),
-    samsort(Values, SortedValues),
-    reverse(SortedValues, ReversedValues),
-    trim(ReversedValues, ScoringType, ActualValues),
-    (list_sum(ActualValues, Value) -> true ; Value = 0).
-algorithm(GameState, Color, [H|T], Values, VisitedIn, Value):-
+% algorithm(+GameState, +Color, +ToVisit, +Accumulator, +VisitedIn, -Value)
+algorithm(_, _, [], Accumulator, _, Value):-
+    Value is Accumulator.
+algorithm(GameState, Color, [H|T], Accumulator, VisitedIn, Value):-
     dfs(GameState, Color, [H], VisitedIn, 0, VisitedOut, X),
-    (X \= 0 -> append(Values, [X], NewValues) ; NewValues = Values),
-    algorithm(GameState, Color, T, NewValues, VisitedOut, Value).
-
-% Returns scoring type to be used, according to the length of the gamestate array
-% get_scoring_type(+L, -ScoringType)
-get_scoring_type(7, 1).
-get_scoring_type(9, 2).
-get_scoring_type(11,3).
-get_scoring_type(_, 1).
+    NewAccumulator is Accumulator + X,
+    algorithm(GameState, Color, T, NewAccumulator, VisitedOut, Value).
 
 % Returns lists with all indexes of square arrays of length L
 % indexes_from_length(+L -Output)
@@ -334,11 +322,10 @@ indexes_from_length(L,Output):-
     fail
    ).
 
-% value(+GameState, +Color, -Value) 
-value(GameState, Color, Value) :-
+value(GameState, Color, Value):-
     length(GameState, L),
     indexes_from_length(L, ToVisit),
-    algorithm(GameState, Color, ToVisit, [], [], Value).
+    algorithm(GameState, Color, ToVisit, 0, [], Value).
 
 
 % ----------------------------------------------------------------

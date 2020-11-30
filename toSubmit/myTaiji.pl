@@ -1,7 +1,6 @@
 % Consulting Files / Modules
 :- use_module(library(random)).
 :- use_module(library(lists)).
-:- use_module(library(samsort)).
 :- [logic, menus, display, board_examples, utils].
 
 % Main Predicate
